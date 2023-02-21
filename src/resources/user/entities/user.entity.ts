@@ -11,8 +11,8 @@ import {
   ManyToOne, PrimaryGeneratedColumn,
   UpdateDateColumn
 } from 'typeorm';
-import { Language } from './language.entity';
-import { Role } from './role.entity';
+import { Language } from '../../../entities/language.entity';
+import { Role } from '../../../entities/role.entity';
 
 @Entity({ name: 'users' })
 export class User extends BaseEntity {

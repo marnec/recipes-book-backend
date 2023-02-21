@@ -1,7 +1,8 @@
 import { HttpException, HttpStatus } from '@nestjs/common';
 import * as cls from 'cls-hooked';
 import { IncomingMessage } from 'http';
-import { User } from 'src/entities/user.entity';
+import { User } from 'src/resources/user/entities/user.entity';
+
 
 export class RequestContext {
   public static nsid = 'some_random_guid';

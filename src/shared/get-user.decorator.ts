@@ -1,5 +1,5 @@
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
-import { User } from 'src/entities/user.entity';
+import { User } from 'src/resources/user/entities/user.entity';
 
 // ogni decorator riceve in input la richiesta e ritorna valori
 // in questo caso la richiesta viene processata dalla funzione

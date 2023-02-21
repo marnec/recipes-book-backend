@@ -3,7 +3,8 @@ import {
   Controller,
   Get,
   Logger,
-  Param, Patch,
+  Param,
+  Patch,
   Post,
   Query,
   UseGuards,
@@ -11,15 +12,14 @@ import {
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from 'src/auth/auth.service';
-import { User } from 'src/entities/user.entity';
 import { RoleGuard } from 'src/guard/role.guard';
 import { Pageable } from 'src/shared/base-paginated-filter.dto';
 import { ROLE_ADMIN_CODE } from 'src/shared/constant';
 import { FilteredPaginatedQuery } from 'src/shared/filtered-query.decorator';
 import { PaginatedResult } from 'src/shared/paginated-result.dto';
-import { MailDto } from './dto/mail.dto';
 import { UpsertUserDto } from './dto/upsert-user.dto';
 import { UserFilterDto } from './dto/user-filter.dto';
+import { User } from './entities/user.entity';
 import { UserService } from './user.service';
 
 @UseGuards(
@@ -56,10 +56,5 @@ export class UserController {
     @Body(ValidationPipe) editUserDto: UpsertUserDto
   ): Promise<User> {
     return await this.service.editUser(userId, editUserDto);
-  }
-
-  @Post('email')
-  async sendPasswordRecoveryEmail(@Body(ValidationPipe) mailDto: MailDto): Promise<boolean> {
-    return this.authService.hanldeResetPasswordRequest(mailDto.email);
   }
 }

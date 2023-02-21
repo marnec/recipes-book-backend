@@ -1,40 +1,35 @@
-# an oracle-api.pem key file needs to be set in /.oci/oracle-api.pem (mounted in docker-compose)
 FROM node:16
+
 WORKDIR /app/
 
-RUN --mount=type=secret,id=env,target=/env
-RUN /bin/bash -c source /env
-RUN ENV
-
-COPY package*.json ./
+# download and unzip instant client (libraries for connection to oracle db)
 RUN cd ../usr/lib && wget https://download.oracle.com/otn_software/linux/instantclient/219000/instantclient-basic-linux.x64-21.9.0.0.0dbru.zip
 RUN cd ../usr/lib && unzip instantclient-basic-linux.x64-21.9.0.0.0dbru.zip
 RUN rm /usr/lib/instantclient-basic-linux.x64-21.9.0.0.0dbru.zip
+
+# set LD_LIBRARY_PATH to instant client location
+# typeorm uses the "oracledb" javascript library, which requires this variable
 ENV LD_LIBRARY_PATH=/usr/lib/instantclient_21_9
-RUN env
-RUN mkdir -p /root/.oci
-RUN printf "[DEFAULT]\nuser=${OCI_USER}\nfingerprint=${OCI_FINGERPRINT}\ntenancy=${OCI_TENANCY}\nregion=${OCI_REGION}\nkey_file=/root/.oci/oracle-api.pem\n"
-RUN printf "[DEFAULT]\nuser=${OCI_USER}\nfingerprint=${OCI_FINGERPRINT}\ntenancy=${OCI_TENANCY}\nregion=${OCI_REGION}\nkey_file=/root/.oci/oracle-api.pem\n" > /root/.oci/config
-RUN cat /root/.oci/config
-RUN curl -L -O https://raw.githubusercontent.com/oracle/oci-cli/master/scripts/install/install.sh 
-RUN chmod +x ./install.sh
-RUN ./install.sh --accept-all-defaults
-SHELL ["bash", "-lc"] 
-RUN echo $OCI_KEY > /root/.oci/oracle-api.pem 
-RUN oci setup repair-file-permissions --file /root/.oci/config
-RUN oci setup repair-file-permissions --file /root/.oci/oracle-api.pem
-RUN echo $OCI_KEY
-RUN cat /root/.oci/oracle-api.pem 
-RUN oci db autonomous-database generate-wallet --autonomous-database-id $OCI_ADB_ID --password $DB_PASSWORD --file wallet.zip
-RUN cp wallet.zip /usr/lib/instantclient_21_9/network/admin/
-RUN cd /usr/lib/instantclient_21_9/network/admin/ && unzip wallet.zip 
-ENV PATH="$PATH:/usr/lib/instantclient_21_9"
+
+# install instant client peer-dependencies
 RUN apt update 
 RUN apt install -y apt-utils
 RUN apt install libaio1 libaio-dev
+
+# install oracle cli: used in entrypoint to download the db wallet (auth for remote db)
+RUN curl -L -O https://raw.githubusercontent.com/oracle/oci-cli/master/scripts/install/install.sh 
+RUN chmod +x ./install.sh
+RUN ./install.sh --accept-all-defaults
+
+# set up npm
+COPY package*.json ./
 RUN npm install -g npm@latest
 RUN npm install -g @nestjs/cli
+
+# expose 3000
 EXPOSE 3000
+
+# set up and run entrypoint
 COPY ./docker/docker-entrypoint.local.sh /docker-entrypoint.local.sh
 RUN chmod +x /docker-entrypoint.local.sh
 ENTRYPOINT /docker-entrypoint.local.sh

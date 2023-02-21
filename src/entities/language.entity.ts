@@ -2,7 +2,7 @@ import {
   BaseEntity, Column,
   CreateDateColumn, Entity, Index, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn
 } from 'typeorm';
-import { User } from './user.entity';
+import { User } from '../resources/user/entities/user.entity';
 
 @Entity({name:'languages'})
 export class Language extends BaseEntity {

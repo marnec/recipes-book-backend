@@ -3,11 +3,10 @@ import {
   BaseEntity, Column,
   CreateDateColumn, Entity, Index, ManyToMany, PrimaryGeneratedColumn, UpdateDateColumn
 } from 'typeorm';
-import { User } from './user.entity';
+import { User } from '../resources/user/entities/user.entity';
 
 @Entity({ name: 'roles' })
 export class Role extends BaseEntity {
-  @ApiProperty()
   @PrimaryGeneratedColumn("uuid")
   id: string;
 

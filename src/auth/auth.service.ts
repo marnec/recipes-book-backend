@@ -9,8 +9,6 @@ import { JwtService } from '@nestjs/jwt';
 import * as moment from 'moment';
 import { ErrorCode, ErrorMessage } from 'src/exception/application-exceptions.enum';
 import { ApplicationException } from 'src/exception/application.exception';
-import { EmailNotificationDto } from 'src/notifier-client/dto/email.dto';
-import { EmailNotification } from 'src/notifier-client/email.notification';
 import { DataSource, Repository } from 'typeorm';
 import { Transactional } from 'typeorm-transactional';
 import { v4 as uuidv4 } from 'uuid';
@@ -20,8 +18,8 @@ import { AuthResponseDto } from './dto/auth-response.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import { PasswordResetRequest } from './password-reset-request.entity';
 import bcrypt = require('bcryptjs');
-import { UserRepository } from 'src/user/user.repository';
-import { User } from 'src/entities/user.entity';
+import { UserRepository } from 'src/resources/user/user.repository';
+import { User } from 'src/resources/user/entities/user.entity';
 
 export interface refreshTokenPayload {
   userId: string;
@@ -36,7 +34,6 @@ export class AuthService {
 
   constructor(
     private jwtService: JwtService,
-    private emailNotificationService: EmailNotification,
     private dataSoruce: DataSource,
     private userRepository: UserRepository
   ) {
@@ -128,87 +125,6 @@ export class AuthService {
     const expirationMoment: moment.Moment = moment(passwordResetRequest.created).add(timeout, 'ms');
 
     return moment(currentDate).isAfter(expirationMoment);
-  }
-
-  private async getValidRequest(
-    requests: PasswordResetRequest[],
-    user: User
-  ): Promise<PasswordResetRequest> {
-    const currentDate = await this.getCurrentDateTime();
-
-    const request = requests.find((requestF) => !this.isExpired(requestF, currentDate));
-
-    try {
-      if (request === undefined || request === null) {
-        const rq = new PasswordResetRequest();
-        rq.user = user;
-        rq.token = uuidv4();
-        this.logger.debug(`Password reset ${user.email}: new request created`);
-        return await this.passwordResetRepository.save(rq);
-      }
-      this.logger.debug(`Password reset ${user.email}: pending request found`);
-      return request;
-    } catch (error) {
-      throw new InternalServerErrorException();
-    }
-  }
-
-  private createResetPasswordLink(passwordResetRequest: PasswordResetRequest): string {
-    const path: string = process.env.PASSWORD_RESET_PATH;
-
-    if (path === null || path === undefined) {
-      this.logger.error('PASSWORD_RESET_PATH invalid');
-      throw new InternalServerErrorException();
-    }
-
-    return `${path}${passwordResetRequest.token}`;
-  }
-
-  async hanldeResetPasswordRequest(email: string): Promise<boolean> {
-    const user = await this.userRepository.findOne({ where: { email } });
-
-    if (!user || !user.enabled) {
-      throw new ApplicationException(ErrorMessage.userNotFound, ErrorCode.userNotFound);
-    }
-
-    const pendingRequest = await this.passwordResetRepository.find({
-      where: { user: { id: user.id }, fulfilled: false }
-    });
-    const request: PasswordResetRequest = await this.getValidRequest(pendingRequest, user);
-
-    const link = this.createResetPasswordLink(request);
-    this.logger.debug(`Password reset: link created ${link}`);
-    const emailData: EmailNotificationDto = new EmailNotificationDto();
-    emailData.to = [email];
-    emailData.from = process.env.NOTIFICATION_FROM_ADDRESS;
-    emailData.subject = '------';
-    emailData.body = `-------- ${link}`;
-    emailData.fake = process.env.NOTIFIER_FAKE_EMAIL === 'true';
-
-    await this.emailNotificationService.send(emailData);
-
-    return true;
-  }
-
-  async sendPassword(email: string, password: string): Promise<boolean> {
-    const user = await this.userRepository.findOne({ where: { email } });
-
-    if (!user || !user.enabled) {
-      this.logger.debug(`New password to ${email}, user not found`);
-      return false;
-    }
-
-    this.logger.debug(`Password changed`);
-    const emailData: EmailNotificationDto = new EmailNotificationDto();
-    emailData.to = [email];
-    emailData.from = process.env.NOTIFICATION_FROM_ADDRESS;
-    emailData.subject = '------';
-    emailData.body = `-------- your new password is ${password}`;
-    emailData.fake = process.env.NOTIFIER_FAKE_EMAIL === 'true';
-
-    await this.emailNotificationService.send(emailData);
-
-    return true;
   }
 
   @Transactional()

@@ -8,13 +8,13 @@ import { DataSource } from 'typeorm';
 import { addTransactionalDataSource } from 'typeorm-transactional';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { AuthHeartbeatModule } from './auth-heartbeat/auth-heartbeat.module';
 import { AuthModule } from './auth/auth.module';
 import { RequestContextMiddleware } from './custom-middleware/request-context.middleware';
-import { NotifierClientModule } from './notifier-client/notifier-client.module';
 import { config } from './ormconfig';
 import { RoleModule } from './role/role.module';
-import { UserModule } from './user/user.module';
+
+import { RecipeModule } from './resources/recipe/recipe.module';
+import { UserModule } from './resources/user/user.module';
 
 require('dotenv').config();
 
@@ -31,17 +31,6 @@ require('dotenv').config();
         return addTransactionalDataSource(new DataSource(options));
       }
     }),
-    NotifierClientModule.register({
-      host: process.env.NOTIFIER_URL,
-      port: parseInt(process.env.NOTIFIER_PORT, 10),
-      app: process.env.NOTIFIER_APP,
-      https: process.env.NOTIFIER_HTTPS === 'true',
-      httpOptions: {
-        timeout: 5000,
-        maxRedirects: 3
-      },
-      token: process.env.NOTIFIER_TOKEN
-    }),
     I18nModule.forRoot({
       fallbackLanguage: 'en',
       parser: I18nJsonParser,
@@ -55,7 +44,7 @@ require('dotenv').config();
     ScheduleModule.forRoot(),
     UserModule,
     RoleModule,
-      AuthHeartbeatModule,
+    RecipeModule
   ],
   controllers: [AppController],
   providers: [AppService]

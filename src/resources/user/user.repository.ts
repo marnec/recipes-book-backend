@@ -1,6 +1,6 @@
-import { User } from 'src/entities/user.entity';
+import { AuthCredentialsDto } from 'src/auth/dto/auth-credentials.dto';
 import { FindOptionsWhere, Repository } from 'typeorm';
-import { AuthCredentialsDto } from '../auth/dto/auth-credentials.dto';
+import { User } from './entities/user.entity';
 
 export class UserRepository extends Repository<User> {
     
@@ -23,7 +23,7 @@ export class UserRepository extends Repository<User> {
       where,
       relations: { roles: true, language: true },
       select: {
-        id: true,
+      id: true,
         email: true,
         name: true,
         surname: true,

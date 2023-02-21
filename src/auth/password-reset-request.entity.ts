@@ -1,5 +1,6 @@
 import { Type } from 'class-transformer';
-import { User } from 'src/entities/user.entity';
+import { User } from 'src/resources/user/entities/user.entity';
+
 import { BaseEntity, Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity({ name: 'password_reset_requests' })

@@ -1,5 +1,5 @@
 import { Logger } from '@nestjs/common';
-import { User } from 'src/entities/user.entity';
+import { User } from 'src/resources/user/entities/user.entity';
 import { RequestContext } from '../custom-middleware/request-context';
 
 const enum LEVELS {

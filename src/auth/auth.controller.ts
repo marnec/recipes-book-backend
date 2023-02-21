@@ -3,9 +3,7 @@ import {
   Body,
   Controller,
   Logger,
-  Post,
-  UsePipes,
-  ValidationPipe
+  Post
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { ErrorCode, ErrorMessage } from 'src/exception/application-exceptions.enum';
@@ -32,12 +30,6 @@ export class AuthController {
   async refresh(@Body('refreshToken') refreshToken: string): Promise<AuthResponseDto> {
     return await this.authService.refresh(refreshToken);
   } // refresh
-
-  @Post('forgot-password')
-  async forgotPassword(@Body() forgotPasswordDto: ForgotPasswordDto): Promise<void> {
-    const { email } = forgotPasswordDto;
-    await this.authService.hanldeResetPasswordRequest(email);
-  }
 
   @Post('reset-password')
   async resetPassword(@Body() resetPasswordDto: ResetPasswordDto): Promise<void> {

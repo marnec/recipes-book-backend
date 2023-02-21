@@ -13,7 +13,6 @@
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug 0.0.0.0:9229 --watch",
     "start:prod": "node dist/main",
-    "start:prod-tracing": "node --require './dist/tracing.js' dist/main",
     "lint": "eslint \"./src/**/*.{tsx,ts}\"",
     "lint-fix": "eslint \"./src/**/*.{tsx,ts}\" --fix",
     "test": "jest --forceExit --detectOpenHandles --coverage",
