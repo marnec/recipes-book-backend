@@ -1,0 +1,6 @@
+import { IsEmail } from 'class-validator';
+export class ForgotPasswordDto {
+  // require_tld: false -> this flags checks if email contains .it, .com or .ecc...
+  @IsEmail({ require_tld: false }) // require_tld: false -> this flags checks if email contains .it, .com or .ecc...
+  email: string;
+}
