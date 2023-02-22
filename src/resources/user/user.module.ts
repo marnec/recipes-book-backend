@@ -1,8 +1,8 @@
 import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from 'src/auth/auth.module';
-import { Language } from 'src/entities/language.entity';
 import { provideCustomRepository } from 'src/shared/provide-custom-repository';
+import { Language } from './entities/language.entity';
 import { User } from './entities/user.entity';
 import { UserController } from './user.controller';
 import { UserRepository } from './user.repository';

@@ -5,15 +5,15 @@ import {
   NotFoundException
 } from '@nestjs/common';
 import * as bcrypt from 'bcryptjs';
-import { Language } from 'src/entities/language.entity';
-import { Role } from 'src/entities/role.entity';
 import { ErrorCode, ErrorMessage } from 'src/exception/application-exceptions.enum';
 import { ApplicationException } from 'src/exception/application.exception';
 import { Pageable } from 'src/shared/base-paginated-filter.dto';
 import { FAKE_PSW, FAKE_SALT } from 'src/shared/constant';
 import { PaginatedResult } from 'src/shared/paginated-result.dto';
+import { Role } from '../role/entities/role.entity';
 import { UpsertUserDto } from './dto/upsert-user.dto';
 import { UserFilterDto } from './dto/user-filter.dto';
+import { Language } from './entities/language.entity';
 import { User } from './entities/user.entity';
 import { UserRepository } from './user.repository';
 
