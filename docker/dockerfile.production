@@ -1,11 +1,36 @@
-FROM node:16node:16-alpine AS builder
-WORKDIR /app
-COPY ./package.json ./package-lock.json ./
+FROM node:16
+
+WORKDIR /app/
+
+# download and unzip instant client (libraries for connection to oracle db)
+RUN cd ../usr/lib && wget https://download.oracle.com/otn_software/linux/instantclient/219000/instantclient-basic-linux.x64-21.9.0.0.0dbru.zip
+RUN cd ../usr/lib && unzip instantclient-basic-linux.x64-21.9.0.0.0dbru.zip
+RUN rm /usr/lib/instantclient-basic-linux.x64-21.9.0.0.0dbru.zip
+
+# set LD_LIBRARY_PATH to instant client location
+# typeorm uses the "oracledb" javascript library, which requires this variable
+ENV LD_LIBRARY_PATH=/usr/lib/instantclient_21_9
+
+# install instant client peer-dependencies
+RUN apt update 
+RUN apt install -y apt-utils
+RUN apt install libaio1 libaio-dev
+
+# install oracle cli: used in entrypoint to download the db wallet (auth for remote db)
+RUN curl -L -O https://raw.githubusercontent.com/oracle/oci-cli/master/scripts/install/install.sh 
+RUN chmod +x ./install.sh
+RUN ./install.sh --accept-all-defaults
+
+# set up npm
+COPY package*.json ./
+RUN npm install -g npm@latest
+# install dependencies
 RUN npm install
+# build
 COPY ./ .
 RUN npm run build
-FROM node:16-alpine
-WORKDIR /app
-COPY --from=builder /app ./
-COPY ./docker/docker-entrypoint.production.sh ./start.sh
-CMD ["sh", "./start.sh"]
+
+# set up and run entrypoint
+COPY ./docker/docker-entrypoint.production.sh /docker-entrypoint.sh
+RUN chmod +x /docker-entrypoint.sh
+ENTRYPOINT /docker-entrypoint.sh

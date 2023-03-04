@@ -7,10 +7,10 @@ import { join } from 'path';
 import { AppModule } from './app.module';
 import { GlobalExceptionFilter } from './exception/exception.filter';
 
+import { initializeApp, cert } from 'firebase-admin/app';
 import 'reflect-metadata';
-import { addTransactionalDataSource, initializeTransactionalContext } from 'typeorm-transactional';
+import { initializeTransactionalContext } from 'typeorm-transactional';
 import { LogService } from './log/log.service';
-import { dataSource } from './ormconfig';
 
 async function bootstrap() {
   /**
@@ -20,6 +20,18 @@ async function bootstrap() {
    */
   initializeTransactionalContext();
 
+
+  // const firebaseConfig = {
+  //   apiKey: "AIzaSyBKCgzrncsKImMBbPq7x2EBKi5SaMA3Lks",
+  //   authDomain: "recipes-ac036.firebaseapp.com",
+  //   projectId: "recipes-ac036",
+  //   storageBucket: "recipes-ac036.appspot.com",
+  //   messagingSenderId: "320224370121",
+  //   appId: "1:320224370121:web:52fd8c7dbca4550c049c18",
+  //   measurementId: "G-ND7VKS1HCE"
+  // };
+
+  initializeApp({credential: cert('./recipes-ac036-firebase-adminsdk-1mje6-a903c2c3df.json')});
 
   // NODE_END per controllare in che ambiente siamo
   // La prioritá viene sempre data alla variabile di sistema in questo

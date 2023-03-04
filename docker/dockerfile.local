@@ -30,6 +30,6 @@ RUN npm install -g @nestjs/cli
 EXPOSE 3000
 
 # set up and run entrypoint
-COPY ./docker/docker-entrypoint.local.sh /docker-entrypoint.local.sh
-RUN chmod +x /docker-entrypoint.local.sh
-ENTRYPOINT /docker-entrypoint.local.sh
+COPY ./docker/docker-entrypoint.local.sh /docker-entrypoint.sh
+RUN chmod +x /docker-entrypoint.sh
+ENTRYPOINT /docker-entrypoint.sh
