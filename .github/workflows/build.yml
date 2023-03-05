@@ -8,20 +8,14 @@ jobs:
     runs-on: self-hosted
     steps:
       - uses: actions/checkout@v3
-  build_deploy:
+  unlock:
     runs-on: self-hosted
     needs: [checkout]
     container:
       image: node:16
-      env: 
-        GOOGLE_APPLICATION_CREDENTIALS: ./recipes-ac036-firebase-adminsdk-1mje6-a903c2c3df.json
     steps:
-      # add docker official GPG key
-      - run: sudo mkdir -m 0755 -p /etc/apt/keyrings
-      - run: curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
-      - run: echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
       # install dependencies
-      - run: apt update && apt install -y git-crypt ca-certificates curl gnupg lsb-release docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+      - run: apt update && apt install -y git-crypt 
       #  config git
       - run: git config --global --add safe.directory /__w/${{ github.event.repository.name }}/${{ github.event.repository.name }}
       - run: git config --global user.name nonapproved_user
@@ -32,6 +26,8 @@ jobs:
       - run: echo "${{ secrets.GIT_CRYPT_KEY }}" | base64 -d > .git/git-crypt/keys/default
       - run: git stash
       - run: git-crypt unlock .git/git-crypt/keys/default
+  build_and_deploy:
+    steps:
       - run: docker login --username=marnec --password-stdin <<<"${{secrets.GITLAB_PERSONAL_ACCESS_TOKEN}}" registry.gitlab.com
       - run: docker build -t registry.gitlab.com/marnec/${{ github.event.repository.name }} -f ./docker/dockerfile.production .
       - run: docker push registry.gitlab.com/marnec/${{ github.event.repository.name }}
