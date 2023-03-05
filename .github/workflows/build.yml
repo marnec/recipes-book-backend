@@ -27,6 +27,7 @@ jobs:
       - run: git stash
       - run: git-crypt unlock .git/git-crypt/keys/default
   build_and_deploy:
+    runs-on: self-hosted
     steps:
       - run: docker login --username=marnec --password-stdin <<<"${{secrets.GITLAB_PERSONAL_ACCESS_TOKEN}}" registry.gitlab.com
       - run: docker build -t registry.gitlab.com/marnec/${{ github.event.repository.name }} -f ./docker/dockerfile.production .
