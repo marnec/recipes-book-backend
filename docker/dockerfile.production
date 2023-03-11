@@ -24,10 +24,18 @@ RUN ./install.sh --accept-all-defaults
 # set up npm
 COPY package*.json ./
 RUN npm install -g npm@latest
+
+COPY ./ .
+
+# compile node-oracledb for arm64
+RUN apt install -y build-essential
+RUN cd libs && tar -xzf oracledb-src-5.5.0.tgz
+RUN mv libs/package libs/oracledb
+RUN cd libs/oracledb && npm run buildbinary && npm run buildpackage
+
 # install dependencies
 RUN npm install
 # build
-COPY ./ .
 RUN npm run build
 
 # set up and run entrypoint

@@ -58,7 +58,7 @@
     "typeorm": "^0.3.12",
     "typeorm-transactional": "^0.4.1",
     "uuid": "^9.0.0",
-    "oracledb": "^5.5.0",
+    "oracledb": "file:libs/oracledb",
     "radash": "^10.7.0",
     "firebase-admin": "11.5.0"
   },

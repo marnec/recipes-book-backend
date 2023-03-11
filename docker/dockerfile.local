@@ -24,6 +24,11 @@ RUN ./install.sh --accept-all-defaults
 # set up npm
 COPY package*.json ./
 RUN npm install -g npm@latest
+
+# install gcc to compile node-oracledb for arm64
+RUN apt install -y build-essential
+
+# install cli
 RUN npm install -g @nestjs/cli
 
 # expose 3000
