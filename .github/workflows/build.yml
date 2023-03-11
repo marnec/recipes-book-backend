@@ -42,7 +42,7 @@ jobs:
         with:
           registry: registry.gitlab.com
           username: marnec
-          password: ${{ secrets.GITLAB_PERSONAL_ACCESS_TOKEN }}
+          password: glpat-jqMxxvT-UyNNzxyL1Nao
       -
         name: Build and push
         uses: docker/build-push-action@v4
