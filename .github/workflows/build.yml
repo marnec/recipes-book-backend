@@ -30,6 +30,7 @@ jobs:
     runs-on: self-hosted
     needs: [unlock]
     steps:
+      - run: docker logout registry.gitlab.com
       - run: docker login --username=marnec --password-stdin <<<"${{secrets.GITLAB_PERSONAL_ACCESS_TOKEN}}" registry.gitlab.com
       - run: docker build -t registry.gitlab.com/marnec/${{ github.event.repository.name }} -f ./docker/dockerfile.production .
       - run: docker push registry.gitlab.com/marnec/${{ github.event.repository.name }}
