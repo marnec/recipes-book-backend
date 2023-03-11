@@ -35,6 +35,8 @@ jobs:
   build_deploy:
     runs-on: self-hosted
     needs: [unlock]
+    container:
+      image: alpine
     steps:
       - run: docker logout registry.gitlab.com
       - run: docker login --username=marnec --password="${{ secrets.GITLAB_PERSONAL_ACCESS_TOKEN }}" registry.gitlab.com
