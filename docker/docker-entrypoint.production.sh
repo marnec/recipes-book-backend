@@ -11,10 +11,8 @@ printf "[DEFAULT]\nuser=${OCI_USER}\nfingerprint=${OCI_FINGERPRINT}\ntenancy=${O
 /root/bin/oci setup repair-file-permissions --file /root/.oci/oracle-api.pem
 /root/bin/oci db autonomous-database generate-wallet --autonomous-database-id=${OCI_ADB_ID} --password=${DB_PASSWORD} --file=wallet.zip
 
-mv wallet.zip /usr/lib/instantclient_19_10/network/admin/
 unzip wallet.zip -d /usr/lib/instantclient_19_10/network/admin/
 export PATH="$PATH:/usr/lib/instantclient_19_10"
 
-
-npm run typeorm migration:run
+npm run typeorm:run
 npm run start:prod
