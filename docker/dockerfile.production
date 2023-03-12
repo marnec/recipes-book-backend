@@ -3,13 +3,13 @@ FROM node:16
 WORKDIR /app/
 
 # download and unzip instant client (libraries for connection to oracle db)
-RUN cd ../usr/lib && wget https://download.oracle.com/otn_software/linux/instantclient/219000/instantclient-basic-linux.x64-21.9.0.0.0dbru.zip
-RUN cd ../usr/lib && unzip instantclient-basic-linux.x64-21.9.0.0.0dbru.zip
-RUN rm /usr/lib/instantclient-basic-linux.x64-21.9.0.0.0dbru.zip
+RUN cd ../usr/lib && wget https://download.oracle.com/otn_software/linux/instantclient/191000/instantclient-basic-linux.arm64-19.10.0.0.0dbru.zip
+RUN cd ../usr/lib && unzip instantclient-basic-linux.arm64-19.10.0.0.0dbru.zip
+RUN rm /usr/lib/instantclient-basic-linux.arm64-19.10.0.0.0dbru.zip
 
 # set LD_LIBRARY_PATH to instant client location
 # typeorm uses the "oracledb" javascript library, which requires this variable
-ENV LD_LIBRARY_PATH=/usr/lib/instantclient_21_9
+ENV LD_LIBRARY_PATH=/usr/lib/instantclient_19_10
 
 # install instant client peer-dependencies
 RUN apt update 
