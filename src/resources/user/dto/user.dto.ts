@@ -1,6 +1,6 @@
+import { Type } from "class-transformer";
 import { IsBoolean, IsEmail, IsNotEmpty, IsOptional, IsString, ValidateNested } from "class-validator";
 import { LanguageDto } from './language.dto';
-import { RoleDto } from './role.dto';
 
 export class UserDto {
     
@@ -33,9 +33,7 @@ export class UserDto {
     salt: string;
   
     @ValidateNested()
-    roles?: RoleDto[];
-  
-    @ValidateNested()
+    @Type(() => LanguageDto)
     language?: LanguageDto;
   }
   

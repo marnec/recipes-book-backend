@@ -39,30 +39,6 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     }
   }
 
-  // private saveSystemLog(
-  //   exception: unknown,
-  //   request: Request,
-  //   logMessage: string,
-  //   status: number,
-  //   stack: string,
-  //   systemCode: string | number
-  // ): void {
-  //   if (!(exception instanceof UnauthorizedException)) {
-  //     this.systemLogService
-  //       .insertLog(
-  //         `${systemCode}`,
-  //         status.toString(),
-  //         logMessage,
-  //         stack,
-  //         JSON.stringify(request.body),
-  //         JSON.stringify(request.query)
-  //       )
-  //       .catch(() => {
-  //         this.logger.warn('Error while saving logs');
-  //       });
-  //   } // if
-  // }
-
  
   getCode(exception: any): string {
     return (exception?.getResponse() as any)?.code;

@@ -1,18 +1,13 @@
-import * as bcrypt from 'bcryptjs';
 import {
   BaseEntity,
   Column,
   CreateDateColumn,
   Entity,
   Index,
-  JoinColumn,
-  JoinTable,
-  ManyToMany,
-  ManyToOne, PrimaryGeneratedColumn,
+  JoinColumn, ManyToOne, PrimaryGeneratedColumn,
   UpdateDateColumn
 } from 'typeorm';
 import { Language } from './language.entity';
-import { Role } from '../../role/entities/role.entity';
 
 @Entity({ name: 'users' })
 export class User extends BaseEntity {
@@ -44,17 +39,6 @@ export class User extends BaseEntity {
   })
   enabled?: boolean;
 
-  @Column({
-    type: 'varchar',
-    select: false
-  })
-  password: string;
-
-  @Column({
-    select: false,
-    nullable: true
-  })
-  salt: string;
 
   @CreateDateColumn({
     select: false
@@ -66,27 +50,9 @@ export class User extends BaseEntity {
   })
   modified: Date;
 
-  @ManyToMany(() => Role, (role) => role.users, { eager: true })
-  @JoinTable({
-    name: 'users_roles',
-    joinColumn: {
-      name: 'user_id',
-      referencedColumnName: 'id'
-    },
-    inverseJoinColumn: {
-      name: 'role_id',
-      referencedColumnName: 'id'
-    }
-  })
-  roles?: Role[];
-
   @ManyToOne(() => Language, (language) => language.users, { eager: true })
   @JoinColumn({ name: 'language_id' })
   language?: Language;
 
-  async validatePassword(password: string): Promise<boolean> {
-    const hash = await bcrypt.hash(password, this.salt);
-    return hash === this.password;
-  }
 
 }

@@ -1,4 +1,3 @@
-/* eslint-disable class-methods-use-this */
 import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { ScheduleModule } from '@nestjs/schedule';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -9,12 +8,9 @@ import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { RequestContextMiddleware } from './custom-middleware/request-context.middleware';
 import { config } from './ormconfig';
-import { RoleModule } from './resources/role/role.module';
-
 import { RecipeModule } from './resources/recipe/recipe.module';
 import { UserModule } from './resources/user/user.module';
 
-require('dotenv').config();
 
 @Module({
   imports: [
@@ -32,7 +28,6 @@ require('dotenv').config();
     AuthModule,
     ScheduleModule.forRoot(),
     UserModule,
-    RoleModule,
     RecipeModule
   ],
   controllers: [AppController],

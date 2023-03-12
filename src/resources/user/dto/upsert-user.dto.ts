@@ -1,6 +1,6 @@
 import {
-  ArrayNotEmpty, IsArray, IsBoolean, IsEmail,
-  IsNotEmpty, IsNumber, IsOptional, IsString, ValidateNested
+  IsBoolean, IsEmail,
+  IsNotEmpty, IsOptional, IsString
 } from 'class-validator';
 
 export class UpsertUserDto {
