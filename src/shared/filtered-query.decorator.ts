@@ -14,9 +14,9 @@ export function FilteredPaginatedQuery<E>(entity: Type<E>): MethodDecorator {
     const methodDescriptor = descriptor;
     methodDescriptor.value = function (...args: any[]) {
       const dto = args[0] as BasePaginatedFilterDto;
-      if (!(dto.constructor.prototype instanceof BasePaginatedFilterDto)) {
+      if (!(dto?.constructor?.prototype instanceof BasePaginatedFilterDto)) {
         throw new ApplicationException(
-          'The first argument of a @FilteredQuery decorated method must extend BasePaginatedFilterDto',
+          'The first argument of a @FilteredPaginatedQuery decorated method must extend BasePaginatedFilterDto',
           ErrorCode.invalidParameters
         );
       }

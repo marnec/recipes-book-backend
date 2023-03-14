@@ -2,18 +2,23 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { RecipeService } from './recipe.service';
 import { CreateRecipeDto } from './dto/create-recipe.dto';
 import { UpdateRecipeDto } from './dto/update-recipe.dto';
+import { FilteredPaginatedQuery } from 'src/shared/filtered-query.decorator';
+import { Recipe } from './entities/recipe.entity';
+import { RecipeFilterDto } from './dto/recipe-filter.dto';
 
 @Controller('recipes')
 export class RecipeController {
   constructor(private readonly recipeService: RecipeService) {}
 
   @Post()
+  
   create(@Body() createRecipeDto: CreateRecipeDto) {
     return this.recipeService.create(createRecipeDto);
   }
 
   @Get()
-  findAll() {
+  @FilteredPaginatedQuery(Recipe)
+  findAll(@Body() recipeFilter: RecipeFilterDto) {
     return this.recipeService.findAll();
   }
 

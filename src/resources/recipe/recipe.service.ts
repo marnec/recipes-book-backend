@@ -12,7 +12,7 @@ export class RecipeService {
   }
 
   findAll() {
-    return `This action returns all recipe`;
+    this.recipeRepository.findAndCount();
   }
 
   findOne(id: number) {

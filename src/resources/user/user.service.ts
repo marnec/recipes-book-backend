@@ -3,7 +3,6 @@ import {
 } from '@nestjs/common';
 import { ErrorCode, ErrorMessage } from 'src/exception/application-exceptions.enum';
 import { ApplicationException } from 'src/exception/application.exception';
-import { FAKE_PSW, FAKE_SALT } from 'src/shared/constant';
 import { UpsertUserDto } from './dto/upsert-user.dto';
 import { Language } from './entities/language.entity';
 import { User } from './entities/user.entity';
