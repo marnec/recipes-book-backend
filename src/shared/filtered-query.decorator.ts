@@ -21,44 +21,44 @@ export function FilteredPaginatedQuery<E>(entity: Type<E>): MethodDecorator {
         );
       }
 
-      const columnNames = Object.keys((entity as any)._OPENAPI_METADATA_FACTORY());
+      // const columnNames = Object.keys((entity as any)._OPENAPI_METADATA_FACTORY());
 
       const [page, size, sort] = objectPop(dto, ['page', 'size', 'sort']);
 
-      Object.entries({ ...dto } as BasePaginatedFilterDto).forEach(([key, value]) => {
-        if (typeof value === 'string') {
-          if (value.includes('%')) {
-            dto[key] = Like(value);
-          }
-        }
+      // Object.entries({ ...dto } as BasePaginatedFilterDto).forEach(([key, value]) => {
+      //   if (typeof value === 'string') {
+      //     if (value.includes('%')) {
+      //       dto[key] = Like(value);
+      //     }
+      //   }
 
-        if (key.slice(-3) === 'Ids') {
-          objectPop(dto, [key]);
-          const columnName = key.slice(0, -3);
+      //   if (key.slice(-3) === 'Ids') {
+      //     objectPop(dto, [key]);
+      //     const columnName = key.slice(0, -3);
 
-          if (columnNames.includes(columnName)) {
-            dto[columnName] = { id: In(value) };
-          } else {
-            logger.error(`Column '${columnName}' not in entity ${entity.name}. Removed from dto`);
-            logger.error('Filtering through a many to many relation is not supported');
-          }
-        }
+      //     if (columnNames.includes(columnName)) {
+      //       dto[columnName] = { id: In(value) };
+      //     } else {
+      //       logger.error(`Column '${columnName}' not in entity ${entity.name}. Removed from dto`);
+      //       logger.error('Filtering through a many to many relation is not supported');
+      //     }
+      //   }
 
-        if (key.slice(-2) === 'Id') {
-          objectPop(dto, [key]);
-          const columnName = snake(key.slice(0, -2));
-          if (columnNames.includes(columnName)) {
-            dto[columnName] = value;
-          } else {
-            logger.error(`Column '${columnName}' not in entity ${entity.name}. Removed from dto`);
-          }
-        }
+      //   if (key.slice(-2) === 'Id') {
+      //     objectPop(dto, [key]);
+      //     const columnName = snake(key.slice(0, -2));
+      //     if (columnNames.includes(columnName)) {
+      //       dto[columnName] = value;
+      //     } else {
+      //       logger.error(`Column '${columnName}' not in entity ${entity.name}. Removed from dto`);
+      //     }
+      //   }
 
-        if (!columnNames.includes(key) && dto.hasOwnProperty(key)) {
-          objectPop(dto, [key]);
-          logger.error(`Column '${key}' not in entity ${entity.name}. Removed from dto`);
-        }
-      });
+      //   if (!columnNames.includes(key) && dto.hasOwnProperty(key)) {
+      //     objectPop(dto, [key]);
+      //     logger.error(`Column '${key}' not in entity ${entity.name}. Removed from dto`);
+      //   }
+      // });
 
       const pageable = new Pageable({ page, size, sort });
       return targetMethod.call(this, ...args, pageable);

@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
+import { Pageable } from 'src/shared/base-paginated-filter.dto';
 import { CreateRecipeDto } from './dto/create-recipe.dto';
+import { RecipeFilterDto } from './dto/recipe-filter.dto';
 import { UpdateRecipeDto } from './dto/update-recipe.dto';
 import { RecipeRepository } from './recipe.repository';
 
@@ -11,8 +13,8 @@ export class RecipeService {
     this.recipeRepository.save(createRecipeDto);
   }
 
-  findAll() {
-    this.recipeRepository.findAndCount();
+  findAll(filter: RecipeFilterDto, { take, skip, order }: Pageable) {
+    this.recipeRepository.findAndCount({ ...filter, take, skip, order });
   }
 
   findOne(id: number) {

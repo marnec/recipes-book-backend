@@ -1,10 +1,11 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
 import { RecipeService } from './recipe.service';
 import { CreateRecipeDto } from './dto/create-recipe.dto';
 import { UpdateRecipeDto } from './dto/update-recipe.dto';
 import { FilteredPaginatedQuery } from 'src/shared/filtered-query.decorator';
 import { Recipe } from './entities/recipe.entity';
 import { RecipeFilterDto } from './dto/recipe-filter.dto';
+import { Pageable } from 'src/shared/base-paginated-filter.dto';
 
 @Controller('recipes')
 export class RecipeController {
@@ -18,8 +19,8 @@ export class RecipeController {
 
   @Get()
   @FilteredPaginatedQuery(Recipe)
-  findAll(@Body() recipeFilter: RecipeFilterDto) {
-    return this.recipeService.findAll();
+  findAll(@Query() filter: RecipeFilterDto, pageable: Pageable) {
+    return this.recipeService.findAll(filter, pageable);
   }
 
   @Get(':id')
