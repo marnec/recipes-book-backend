@@ -8,9 +8,9 @@ import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { RequestContextMiddleware } from './custom-middleware/request-context.middleware';
 import { config } from './ormconfig';
+import { IngredientsModule } from './resources/ingredients/ingredients.module';
 import { RecipeModule } from './resources/recipe/recipe.module';
 import { UserModule } from './resources/user/user.module';
-
 
 @Module({
   imports: [
@@ -28,7 +28,8 @@ import { UserModule } from './resources/user/user.module';
     AuthModule,
     ScheduleModule.forRoot(),
     UserModule,
-    RecipeModule
+    RecipeModule,
+    IngredientsModule
   ],
   controllers: [AppController],
   providers: [AppService]

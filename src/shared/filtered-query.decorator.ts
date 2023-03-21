@@ -1,7 +1,7 @@
-import { Logger, Type } from '@nestjs/common';
+import { BadRequestException, Logger, Type } from '@nestjs/common';
 import { snake } from 'radash';
-import { ErrorCode } from 'src/exception/application-exceptions.enum';
-import { ApplicationException } from 'src/exception/application.exception';
+import { ErrorCode } from 'src/exceptions/application-exceptions.enum';
+
 import { objectPop } from 'src/shared/utils';
 import { In, Like } from 'typeorm';
 import { BasePaginatedFilterDto, Pageable } from './base-paginated-filter.dto';
@@ -15,9 +15,8 @@ export function FilteredPaginatedQuery<E>(entity: Type<E>): MethodDecorator {
     methodDescriptor.value = function (...args: any[]) {
       const dto = args[0] as BasePaginatedFilterDto;
       if (!(dto?.constructor?.prototype instanceof BasePaginatedFilterDto)) {
-        throw new ApplicationException(
-          'The first argument of a @FilteredPaginatedQuery decorated method must extend BasePaginatedFilterDto',
-          ErrorCode.invalidParameters
+        throw new BadRequestException(
+          'The first argument of a @FilteredPaginatedQuery decorated method must extend BasePaginatedFilterDto'
         );
       }
 

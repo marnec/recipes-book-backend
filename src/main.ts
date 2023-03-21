@@ -1,15 +1,15 @@
 import { Logger, ValidationPipe } from '@nestjs/common';
-import { NestFactory } from '@nestjs/core';
+import { HttpAdapterHost, NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { json, urlencoded } from 'express';
 import { join } from 'path';
 import { AppModule } from './app.module';
-import { GlobalExceptionFilter } from './exception/exception.filter';
 import { initializeApp, cert } from 'firebase-admin/app';
 import { initializeTransactionalContext } from 'typeorm-transactional';
-import { LogService } from './log/log.service';
 import 'reflect-metadata';
+import { QueryExceptionFilter } from './exceptions/query-exception.filter';
+import { HttpExceptionFilter } from './exceptions/http-exceptions.filter';
 
 async function bootstrap() {
   initializeTransactionalContext();
@@ -47,8 +47,9 @@ async function bootstrap() {
       transformOptions: { enableImplicitConversion: true }
     })
   );
-  const logService = app.get(LogService);
-  app.useGlobalFilters(new GlobalExceptionFilter(logService));
+
+  const httpAdapter = app.get<HttpAdapterHost>(HttpAdapterHost);
+  app.useGlobalFilters(new QueryExceptionFilter(httpAdapter), new HttpExceptionFilter());
 
   await app.listen(port);
   logger.log(`Application listening on port ${port}`);

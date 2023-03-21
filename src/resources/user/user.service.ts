@@ -1,8 +1,6 @@
 import {
-  Injectable
+  Injectable, NotFoundException
 } from '@nestjs/common';
-import { ErrorCode, ErrorMessage } from 'src/exception/application-exceptions.enum';
-import { ApplicationException } from 'src/exception/application.exception';
 import { UpsertUserDto } from './dto/upsert-user.dto';
 import { Language } from './entities/language.entity';
 import { User } from './entities/user.entity';
@@ -17,7 +15,7 @@ export class UserService {
     const user = await this.userRepository.findOne({ where: { id } });
 
     if (!user) {
-      throw new ApplicationException(ErrorMessage.userNotFound, ErrorCode.userNotFound);
+      throw new NotFoundException();
     }
 
     return user;
