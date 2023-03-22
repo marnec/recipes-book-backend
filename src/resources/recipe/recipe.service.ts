@@ -11,8 +11,8 @@ import { RecipeRepository } from './recipe.repository';
 export class RecipeService {
   constructor(private recipeRepository: RecipeRepository) {}
 
-  async create(createRecipeDto: CreateRecipeDto) {
-    return this.recipeRepository.save(createRecipeDto);
+  findOne(id: string): Promise<Recipe> {
+    return this.recipeRepository.findOneByOrFail({ id });
   }
 
   async findAll(
@@ -22,12 +22,12 @@ export class RecipeService {
     return this.recipeRepository.findAndCount({ ...filter, take, skip, order });
   }
 
-  findOne(id: string): Promise<Recipe> {
-    return this.recipeRepository.findOneByOrFail({ id });
+  async create(createRecipeDto: CreateRecipeDto) {
+    return this.recipeRepository.save(createRecipeDto);
   }
 
-  update(id: number, updateRecipeDto: UpdateRecipeDto) {
-    return `This action updates a #${id} recipe`;
+  async update(id: string, updateRecipeDto: UpdateRecipeDto): Promise<Recipe> {
+    return this.recipeRepository.save({ id, ...updateRecipeDto });
   }
 
   async remove(id: string): Promise<DeleteResult> {

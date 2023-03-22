@@ -11,6 +11,7 @@ import { config } from './ormconfig';
 import { IngredientsModule } from './resources/ingredients/ingredients.module';
 import { RecipeModule } from './resources/recipe/recipe.module';
 import { UserModule } from './resources/user/user.module';
+import { NutritionixModule } from './resources/nutritionix/nutritionix.module';
 
 @Module({
   imports: [
@@ -29,7 +30,8 @@ import { UserModule } from './resources/user/user.module';
     ScheduleModule.forRoot(),
     UserModule,
     RecipeModule,
-    IngredientsModule
+    IngredientsModule,
+    NutritionixModule
   ],
   controllers: [AppController],
   providers: [AppService]

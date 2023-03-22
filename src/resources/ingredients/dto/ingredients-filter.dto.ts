@@ -9,5 +9,5 @@ export class IngredientsFilterDto {
 
   branded = false;
   common = true;
-  detailed = false;
+  detailed = true;
 }

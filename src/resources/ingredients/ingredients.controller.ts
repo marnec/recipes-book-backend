@@ -1,26 +1,38 @@
 import {
-  Body, ClassSerializerInterceptor, Controller, Delete, Get, Param, Patch, Post, Query, UseInterceptors
+  Body,
+  ClassSerializerInterceptor,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Query,
+  UseInterceptors
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { CreateIngredientDto } from './dto/create-ingredient.dto';
 import { IngredientsFilterDto } from './dto/ingredients-filter.dto';
-import { IngredientSearchResult } from './dto/search-ingredient-result.dto';
 import { UpdateIngredientDto } from './dto/update-ingredient.dto';
 import { IngredientsService } from './ingredients.service';
+import { NutritionixService } from '../nutritionix/nutritionix.service';
+import { IngredientSearchResult } from './dto/ingredients-search-results.dto';
 
 @Controller('ingredients')
 export class IngredientsController {
-  constructor(private readonly ingredientsService: IngredientsService) {}
+  constructor(
+    private readonly ingredientsService: IngredientsService,
+    private nutritionix: NutritionixService
+  ) {}
 
   @Post()
   create(@Body() createIngredientDto: CreateIngredientDto) {
     return this.ingredientsService.create(createIngredientDto);
   }
 
-  @UseInterceptors(ClassSerializerInterceptor)
   @Get()
   find(@Query() filter: IngredientsFilterDto): Observable<IngredientSearchResult[]> {
-    return this.ingredientsService.find(filter);
+    return this.nutritionix.searchIngredient(filter);
   }
 
   @Get(':id')
