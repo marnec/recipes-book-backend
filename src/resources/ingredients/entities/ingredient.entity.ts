@@ -1,5 +1,14 @@
+import { Nutrient } from 'src/resources/nutrients/entities/nutrient.entity';
 import { Recipe } from 'src/resources/recipe/entities/recipe.entity';
-import { BaseEntity, Column, Entity, ManyToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  BaseEntity,
+  Column,
+  Entity,
+  JoinColumn,
+  JoinTable,
+  ManyToMany,
+  PrimaryGeneratedColumn
+} from 'typeorm';
 
 @Entity({ name: 'ingredients' })
 export class Ingredient extends BaseEntity {
@@ -18,6 +27,22 @@ export class Ingredient extends BaseEntity {
   @Column({ type: 'float' })
   amount: number;
 
+  // nutritionix fields
+  @Column({ type: 'int', name: 'external_id' })
+  externalId: number;
+
   @ManyToMany(() => Recipe, (recipe) => recipe.ingredients)
   recipes: Recipe[];
+
+  @ManyToMany(() => Nutrient)
+  @JoinTable({
+    name: 'ingredients_nutrients',
+    joinColumn: {
+      name: 'ingredient_id'
+    },
+    inverseJoinColumn: {
+      name: 'nutrient_id'
+    }
+  })
+  nutrients: Nutrient[];
 }

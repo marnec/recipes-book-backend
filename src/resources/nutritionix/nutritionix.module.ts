@@ -4,6 +4,7 @@ import { HttpModule } from '@nestjs/axios';
 
 @Module({
   imports: [HttpModule],
-  providers: [NutritionixService,]
+  providers: [NutritionixService],
+  exports: [NutritionixService]
 })
 export class NutritionixModule {}

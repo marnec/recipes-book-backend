@@ -3,6 +3,7 @@ import { Pageable } from 'src/shared/base-paginated-filter.dto';
 import { FilteredPaginatedQuery } from 'src/shared/filtered-query.decorator';
 import { PaginatedResult } from 'src/shared/paginated-result.dto';
 import { DeleteResult } from 'typeorm';
+import { IngredientSearchResult } from '../ingredients/dto/ingredients-search-results.dto';
 import { CreateRecipeDto } from './dto/create-recipe.dto';
 import { RecipeFilterDto } from './dto/recipe-filter.dto';
 import { UpdateRecipeDto } from './dto/update-recipe.dto';
@@ -31,6 +32,22 @@ export class RecipeController {
   @Post()
   async create(@Body() createRecipeDto: CreateRecipeDto) {
     return this.recipeService.create(createRecipeDto);
+  }
+
+  @Post(':id/ingredients')
+  async associateNewIngredient(
+    @Param('id') id: string,
+    @Body() newIngredient: Pick<IngredientSearchResult, 'foodName'>
+  ) {
+    return this.recipeService.associateNewIngredient(id, newIngredient);
+  }
+
+  @Put(':id/ingredients')
+  async associateIngredient(
+    @Param('id') id: string,
+    @Body() ingredient: IngredientSearchResult
+  ) {
+    return this.recipeService.associateIngredient(id, ingredient);
   }
 
   @Put(':id')

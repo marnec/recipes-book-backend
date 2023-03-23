@@ -1,12 +1,16 @@
-import { Module } from '@nestjs/common';
-import { IngredientsService } from './ingredients.service';
-import { IngredientsController } from './ingredients.controller';
 import { HttpModule } from '@nestjs/axios';
-import { NutritionixService } from '../nutritionix/nutritionix.service';
+import { Module } from '@nestjs/common';
+import { provideCustomRepository } from 'src/shared/provide-custom-repository';
+import { NutritionixModule } from '../nutritionix/nutritionix.module';
+import { Ingredient } from './entities/ingredient.entity';
+import { IngredientRepository } from './ingredient.repository';
+import { IngredientsController } from './ingredients.controller';
+import { IngredientsService } from './ingredients.service';
 
 @Module({
-  imports: [HttpModule],
+  imports: [HttpModule, NutritionixModule],
   controllers: [IngredientsController],
-  providers: [IngredientsService, NutritionixService]
+  providers: [provideCustomRepository(Ingredient, IngredientRepository), IngredientsService],
+  exports: [IngredientsService]
 })
 export class IngredientsModule {}

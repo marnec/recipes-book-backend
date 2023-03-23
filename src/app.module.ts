@@ -12,6 +12,7 @@ import { IngredientsModule } from './resources/ingredients/ingredients.module';
 import { RecipeModule } from './resources/recipe/recipe.module';
 import { UserModule } from './resources/user/user.module';
 import { NutritionixModule } from './resources/nutritionix/nutritionix.module';
+import { NutrientsModule } from './resources/nutrients/nutrients.module';
 
 @Module({
   imports: [
@@ -31,7 +32,8 @@ import { NutritionixModule } from './resources/nutritionix/nutritionix.module';
     UserModule,
     RecipeModule,
     IngredientsModule,
-    NutritionixModule
+    NutritionixModule,
+    NutrientsModule
   ],
   controllers: [AppController],
   providers: [AppService]
