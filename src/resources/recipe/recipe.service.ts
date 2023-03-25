@@ -1,9 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { Pageable } from 'src/shared/base-paginated-filter.dto';
 import { DeleteResult } from 'typeorm';
+import { Transactional } from 'typeorm-transactional';
 import { IngredientSearchResult } from '../ingredients/dto/ingredients-search-results.dto';
+import { Ingredient } from '../ingredients/entities/ingredient.entity';
 import { IngredientsService } from '../ingredients/ingredients.service';
-import { NutritionixService } from '../nutritionix/nutritionix.service';
+import { NutrientsService } from '../nutrients/nutrients.service';
 import { CreateRecipeDto } from './dto/create-recipe.dto';
 import { RecipeFilterDto } from './dto/recipe-filter.dto';
 import { UpdateRecipeDto } from './dto/update-recipe.dto';
@@ -14,12 +16,15 @@ import { RecipeRepository } from './recipe.repository';
 export class RecipeService {
   constructor(
     private recipeRepository: RecipeRepository,
-    private nutritionix: NutritionixService,
-    private ingredientService: IngredientsService
+    private ingredientService: IngredientsService,
+    private nutrientsService: NutrientsService
   ) {}
 
   findOne(id: string): Promise<Recipe> {
-    return this.recipeRepository.findOneByOrFail({ id });
+    return this.recipeRepository.findOne({
+      where: { id },
+      relations: { ingredients: true }
+    });
   }
 
   async findAll(
@@ -44,14 +49,44 @@ export class RecipeService {
     throw new Error('Method not implemented.');
   }
 
-  async associateIngredient(id: string, ingredient: IngredientSearchResult) {
-    const enrichedIngredients = ingredient.fullNutrients
-      .map((nutrient) => ({
-        ...nutrient,
-        ...this.nutritionix.nutrientsMap$.value[nutrient.attrId]
-      }))
+  @Transactional()
+  async associateIngredient(
+    id: string,
+    selectedIngredient: IngredientSearchResult
+  ): Promise<Recipe> {
+    let ingredient = await this.ingredientService.findOneByTagId(selectedIngredient.tagId);
 
-    console.log(enrichedIngredients);
+    if (!ingredient) {
+      ingredient = await this.ingredientService.create({
+        externalId: selectedIngredient.tagId,
+        name: selectedIngredient.foodName,
+        unit: selectedIngredient.servingUnit,
+        set: 0
+      });
+    }
+
+    await this.nutrientsService.associateNutrients(ingredient.id, selectedIngredient.fullNutrients);
+
+    const recipe = await this.recipeRepository.findOne({
+      where: { id },
+      relations: { ingredients: true }
+    });
+
+    recipe.ingredients.push(ingredient);
+
+    return this.recipeRepository.save(recipe);
+  }
+
+  @Transactional()
+  async dissociateIngredient(id: string, ingredientId: string): Promise<Recipe> {
+    const recipe = await this.recipeRepository.findOne({
+      where: { id },
+      relations: { ingredients: true }
+    });
+
+    recipe.ingredients = recipe.ingredients.filter((ingredient) => ingredient.id != ingredientId);
+
+    return this.recipeRepository.save(recipe)
   }
 
   async remove(id: string): Promise<DeleteResult> {

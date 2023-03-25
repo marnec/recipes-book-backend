@@ -1,6 +1,5 @@
-import { NutrientDto } from "src/resources/nutritionix/dto/nutrient.dto";
 
-export interface IngredientFullNutrients {
+export interface IngredientFullNutrient {
   value: number;
   attrId: number;
 }
@@ -24,5 +23,5 @@ export interface IngredientSearchResult {
   
     locale: string;
 
-    fullNutrients: IngredientFullNutrients[]
+    fullNutrients: IngredientFullNutrient[]
   }

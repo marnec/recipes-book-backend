@@ -8,16 +8,16 @@ import { IngredientRepository } from './ingredient.repository';
 export class IngredientsService {
   constructor(private ingredientRepository: IngredientRepository) {}
 
-  create(createIngredientDto: CreateIngredientDto) {
-    return 'This action adds a new ingredient';
+  create(createIngredientDto: CreateIngredientDto): Promise<Ingredient> {
+    return this.ingredientRepository.save(createIngredientDto)
   }
 
   findOne(id: number) {
     return `This action returns a #${id} ingredient`;
   }
 
-  findOneByAttrId(attrId: number): Promise<Ingredient | null> {
-    return this.ingredientRepository.findOneBy({ externalId: attrId });
+  findOneByTagId(tagId: number): Promise<Ingredient | null> {
+    return this.ingredientRepository.findOne({where: { externalId: tagId }});
   }
 
   update(id: number, updateIngredientDto: UpdateIngredientDto) {

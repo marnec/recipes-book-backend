@@ -1,4 +1,6 @@
-import { BaseEntity, Column, Entity, Index, PrimaryGeneratedColumn } from 'typeorm';
+import { Ingredient } from 'src/resources/ingredients/entities/ingredient.entity';
+import { IngredientNutrient } from 'src/resources/ingredients/entities/ingredient_nutrients.entity';
+import { BaseEntity, Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity({ name: 'nutrients' })
 export class Nutrient extends BaseEntity {
@@ -8,18 +10,21 @@ export class Nutrient extends BaseEntity {
   @Column({ type: 'int', name: 'external_id' })
   externalId: number;
 
-  @Column({ type: 'varchar' })
+  @Column({ type: 'varchar', nullable: true })
   description: string;
 
-  @Column({ type: 'varchar', name: 'usda_code' })
+  @Column({ type: 'varchar', name: 'usda_code', nullable: true })
   usdaCode: string;
 
-  @Column({ type: 'int', name: 'usda_order' })
+  @Column({ type: 'int', name: 'usda_order', nullable: true })
   usdaOrder: number;
 
-  @Column({ type: 'int', name: 'fda_daily' })
+  @Column({ type: 'int', name: 'fda_daily', nullable: true })
   fdaDaily: number;
 
   @Column({ type: 'varchar' })
   unit: string;
+  
+  @OneToMany(() => IngredientNutrient, (nutrientIngredients) => nutrientIngredients.nutrient)
+  nutrientIngredients: IngredientNutrient[]
 }

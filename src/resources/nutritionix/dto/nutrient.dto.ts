@@ -1,4 +1,4 @@
-export class NutrientDto {
+export class NutritionixNutrientDto {
   attrId: number;
   unit: string;
   usdaNutrDesc: string;

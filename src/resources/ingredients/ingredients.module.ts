@@ -10,7 +10,10 @@ import { IngredientsService } from './ingredients.service';
 @Module({
   imports: [HttpModule, NutritionixModule],
   controllers: [IngredientsController],
-  providers: [provideCustomRepository(Ingredient, IngredientRepository), IngredientsService],
+  providers: [
+    provideCustomRepository(Ingredient, IngredientRepository),
+    IngredientsService
+  ],
   exports: [IngredientsService]
 })
 export class IngredientsModule {}

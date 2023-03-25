@@ -43,10 +43,7 @@ export class RecipeController {
   }
 
   @Put(':id/ingredients')
-  async associateIngredient(
-    @Param('id') id: string,
-    @Body() ingredient: IngredientSearchResult
-  ) {
+  async associateIngredient(@Param('id') id: string, @Body() ingredient: IngredientSearchResult) {
     return this.recipeService.associateIngredient(id, ingredient);
   }
 
@@ -58,5 +55,10 @@ export class RecipeController {
   @Delete(':id')
   remove(@Param('id') id: string): Promise<DeleteResult> {
     return this.recipeService.remove(id);
+  }
+
+  @Delete(':id/ingredients/:ingredientId')
+  async removeIngredient(@Param('id') id: string, @Param('ingredientId') ingredientId: string): Promise<Recipe> {
+    return this.recipeService.dissociateIngredient(id, ingredientId);
   }
 }

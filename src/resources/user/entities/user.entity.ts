@@ -4,10 +4,11 @@ import {
   CreateDateColumn,
   Entity,
   Index,
-  JoinColumn, ManyToOne, PrimaryGeneratedColumn,
+  JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn,
   UpdateDateColumn
 } from 'typeorm';
 import { Language } from './language.entity';
+import { UserRecipe } from './user-recipe.entity';
 
 @Entity({ name: 'users' })
 export class User extends BaseEntity {
@@ -55,4 +56,6 @@ export class User extends BaseEntity {
   language?: Language;
 
 
+  @OneToMany(() => UserRecipe, (userRecipe) => userRecipe.user)
+  recipes: UserRecipe[]
 }
