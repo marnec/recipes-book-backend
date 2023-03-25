@@ -42,11 +42,17 @@ export class RecipeService {
     return this.recipeRepository.save({ id, ...updateRecipeDto });
   }
 
-  async associateNewIngredient(
-    id: string,
-    newIngredient: Pick<IngredientSearchResult, 'foodName'>
-  ) {
-    throw new Error('Method not implemented.');
+  async associateNewIngredient(id: string, { foodName }: Pick<IngredientSearchResult, 'foodName'>): Promise<Recipe> {
+    const ingredient = await this.ingredientService.create({ name: foodName, set: 0 });
+
+    const recipe = await this.recipeRepository.findOne({
+      where: { id },
+      relations: { ingredients: true }
+    });
+
+    recipe.ingredients.push(ingredient);
+
+    return this.recipeRepository.save(recipe);
   }
 
   @Transactional()
@@ -86,7 +92,7 @@ export class RecipeService {
 
     recipe.ingredients = recipe.ingredients.filter((ingredient) => ingredient.id != ingredientId);
 
-    return this.recipeRepository.save(recipe)
+    return this.recipeRepository.save(recipe);
   }
 
   async remove(id: string): Promise<DeleteResult> {

@@ -20,13 +20,13 @@ export class Ingredient extends BaseEntity {
   set: number;
 
   @Column({ type: 'varchar', nullable: true })
-  unit: string;
+  unit?: string;
 
   @Column({ type: 'float', nullable: true })
   amount?: number;
 
   @Column({ type: 'int', name: 'external_id', nullable: true })
-  externalId: number;
+  externalId?: number;
 
   @ManyToMany(() => Recipe, (recipe) => recipe.ingredients)
   recipes?: Recipe[];

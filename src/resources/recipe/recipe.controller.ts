@@ -43,7 +43,7 @@ export class RecipeController {
   }
 
   @Put(':id/ingredients')
-  async associateIngredient(@Param('id') id: string, @Body() ingredient: IngredientSearchResult) {
+  async associateIngredient(@Param('id') id: string, @Body() ingredient: IngredientSearchResult): Promise<Recipe> {
     return this.recipeService.associateIngredient(id, ingredient);
   }
 
