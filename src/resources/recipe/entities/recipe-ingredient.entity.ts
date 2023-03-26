@@ -11,13 +11,19 @@ export class RecipeIngredient extends BaseEntity {
   ingredientId: string;
 
   @ManyToOne(() => Recipe, (recipe) => recipe.ingredients)
-  @JoinColumn({ name: 'recipe_id'})
+  @JoinColumn({ name: 'recipe_id' })
   recipe: Recipe;
 
   @ManyToOne(() => Ingredient, (ingredient) => ingredient.recipes)
-  @JoinColumn({ name: 'ingredient_id'})
+  @JoinColumn({ name: 'ingredient_id' })
   ingredient: Ingredient;
 
-  @Column({type: 'int'})
-  order: number
+  @Column({ type: 'int' })
+  order: number;
+
+  @Column({ type: 'float', nullable: true })
+  amount?: number;
+
+  @Column({ type: 'varchar', nullable: true })
+  unit?: string;
 }

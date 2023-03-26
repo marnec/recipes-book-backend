@@ -28,6 +28,7 @@ export class IngredientsService {
         externalId: selectedIngredient.tagId,
         name: selectedIngredient.foodName,
         unit: selectedIngredient.servingUnit,
+        amount: selectedIngredient.servingQty,
         set: 0
       });
     }
