@@ -3,8 +3,10 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  Index,
-  JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
   UpdateDateColumn
 } from 'typeorm';
 import { Language } from './language.entity';
@@ -15,9 +17,8 @@ export class User extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Index({ unique: true })
-  @Column('varchar')
-  username: string;
+  @Column({ type: 'varchar' })
+  uid: string;
 
   @Column({
     type: 'varchar',
@@ -25,37 +26,22 @@ export class User extends BaseEntity {
   })
   email?: string;
 
-  @Column({ nullable: true })
-  name?: string;
+  @Column({ type: 'varchar', name: 'username', nullable: true })
+  userName?: string;
 
-  @Column({
-    type: 'varchar',
-    nullable: true
-  })
-  surname?: string;
+  @Column({ type: 'varchar', length: 8000 })
+  avatar: string;
 
-  @Column({
-    nullable: false,
-    default: true
-  })
-  enabled?: boolean;
-
-
-  @CreateDateColumn({
-    select: false
-  })
+  @CreateDateColumn()
   created: Date;
 
-  @UpdateDateColumn({
-    select: false
-  })
+  @UpdateDateColumn()
   modified: Date;
 
-  @ManyToOne(() => Language, (language) => language.users, { eager: true })
+  @ManyToOne(() => Language, (language) => language.users)
   @JoinColumn({ name: 'language_id' })
   language?: Language;
 
-
   @OneToMany(() => UserRecipe, (userRecipe) => userRecipe.user)
-  recipes: UserRecipe[]
+  recipes: UserRecipe[];
 }

@@ -1,15 +1,11 @@
-import { Ingredient } from 'src/resources/ingredients/entities/ingredient.entity';
 import { UserRecipe } from 'src/resources/user/entities/user-recipe.entity';
 import {
   BaseEntity,
   Column,
-  Entity,
-  JoinColumn,
-  JoinTable,
-  ManyToMany,
-  OneToMany,
+  Entity, OneToMany,
   PrimaryGeneratedColumn
 } from 'typeorm';
+import { RecipeIngredient } from './recipe-ingredient.entity';
 
 @Entity({ name: 'recipes' })
 export class Recipe extends BaseEntity {
@@ -25,16 +21,8 @@ export class Recipe extends BaseEntity {
   @Column({ type: 'int', nullable: true })
   servings: number;
 
-  @ManyToMany(() => Ingredient, (ingredient) => ingredient.recipes, {
-    onDelete: 'NO ACTION',
-    cascade: ['insert', 'update']
-  })
-  @JoinTable({
-    name: 'recipes_ingredients',
-    joinColumn: { name: 'recipe_id' },
-    inverseJoinColumn: { name: 'ingredient_id' }
-  })
-  ingredients: Ingredient[];
+  @OneToMany(() => RecipeIngredient, (recipeIngredient) => recipeIngredient.recipe)
+  ingredients: RecipeIngredient[]
 
   @OneToMany(() => UserRecipe, (userRecipe) => userRecipe.recipe)
   collaborators: UserRecipe[];

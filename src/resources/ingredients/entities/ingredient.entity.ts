@@ -1,11 +1,6 @@
-import { Recipe } from 'src/resources/recipe/entities/recipe.entity';
-import {
-  BaseEntity,
-  Column,
-  Entity, ManyToMany,
-  OneToMany,
-  PrimaryGeneratedColumn
-} from 'typeorm';
+
+import { RecipeIngredient } from 'src/resources/recipe/entities/recipe-ingredient.entity';
+import { BaseEntity, Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { IngredientNutrient } from './ingredient_nutrients.entity';
 
 @Entity({ name: 'ingredients' })
@@ -28,9 +23,12 @@ export class Ingredient extends BaseEntity {
   @Column({ type: 'int', name: 'external_id', nullable: true })
   externalId?: number;
 
-  @ManyToMany(() => Recipe, (recipe) => recipe.ingredients)
-  recipes?: Recipe[];
+  @Column({ type: 'int', name: 'nutrients_source_id', nullable: true })
+  nutrientsSourceId?: number;
+
+  @OneToMany(() => RecipeIngredient, (recipeIngredient) => recipeIngredient.ingredient)
+  recipes?: RecipeIngredient[];
 
   @OneToMany(() => IngredientNutrient, (ingredientNutrients) => ingredientNutrients.ingredient)
-  ingredientNutrients?: IngredientNutrient[]
+  nutrients?: IngredientNutrient[];
 }

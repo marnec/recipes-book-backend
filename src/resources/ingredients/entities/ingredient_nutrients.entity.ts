@@ -4,7 +4,7 @@ import { Ingredient } from './ingredient.entity';
 
 @Entity({ name: 'ingredients_nutrients' })
 export class IngredientNutrient extends BaseEntity {
-  @ManyToOne(() => Ingredient, (ingredient) => ingredient.ingredientNutrients)
+  @ManyToOne(() => Ingredient, (ingredient) => ingredient.nutrients)
   @JoinColumn({ name: 'ingredient_id' })
   ingredient?: Ingredient;
 

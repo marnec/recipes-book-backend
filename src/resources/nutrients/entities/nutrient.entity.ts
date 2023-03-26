@@ -1,4 +1,3 @@
-import { Ingredient } from 'src/resources/ingredients/entities/ingredient.entity';
 import { IngredientNutrient } from 'src/resources/ingredients/entities/ingredient_nutrients.entity';
 import { BaseEntity, Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 

@@ -7,9 +7,10 @@ import { Nutrient } from './entities/nutrient.entity';
 import { NutrientRepository } from './nutrient.repository';
 import { IngredientNutrient } from '../ingredients/entities/ingredient_nutrients.entity';
 import { IngredientNutrientRepository } from '../ingredients/ingredient-nutrient.repository';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 @Module({
-  imports: [NutritionixModule],
+  imports: [TypeOrmModule.forFeature([Nutrient]), NutritionixModule],
   controllers: [NutrientsController],
   providers: [
     NutrientsService,

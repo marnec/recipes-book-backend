@@ -34,7 +34,7 @@ function objectRepresentation(obj: any): string {
         break;
       case obj.constructor === Object:
         repr = `{${Object.keys(obj)
-          .map(e => `<${e}>`)
+          .map((e) => `<${e}>`)
           .join(', ')}}`;
         break;
       default:
@@ -47,7 +47,7 @@ function objectRepresentation(obj: any): string {
 }
 
 function defaultLogMessage(args: any[]): string {
-  return `args: ${args.map(arg => objectRepresentation(arg)).join(', ')}`;
+  return `args: ${args.map((arg) => objectRepresentation(arg)).join(', ')}`;
 }
 
 function replaceAll(stringInExam: string, search: string, replace: string): string {
@@ -64,8 +64,8 @@ function replaceAll(stringInExam: string, search: string, replace: string): stri
  */
 function setUserFields(user: User): string {
   if (user != null) {
-    const { name, email, id } = user;
-    return `****User: name '${name}' email '${email}' id '${id}'****`;
+    const { userName, email, id } = user;
+    return `****User: name '${userName}' email '${email}' id '${id}'****`;
   }
   return null;
 } // setUserFields
@@ -126,7 +126,7 @@ export function logger(options?: Opts): MethodDecorator {
 
     let nestDescLoc = nestDesc;
     // eslint-disable-next-line func-names
-    myDescriptor.value = function(...args: any[]) {
+    myDescriptor.value = function (...args: any[]) {
       // when said the number of the parameter of the function, specify the property
       // ex. @0.description or @1.name...
       if (atArr && atArr?.length) {

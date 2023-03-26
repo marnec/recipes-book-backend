@@ -7,10 +7,17 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Recipe } from './entities/recipe.entity';
 import { IngredientsModule } from '../ingredients/ingredients.module';
 import { NutrientsModule } from '../nutrients/nutrients.module';
+import { UserModule } from '../user/user.module';
+import { RecipeIngredient } from './entities/recipe-ingredient.entity';
+import { RecipeIngredientRepository } from './recipe-ingredient.repository';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Recipe]), NutrientsModule, IngredientsModule],
+  imports: [TypeOrmModule.forFeature([Recipe, RecipeIngredient]), NutrientsModule, IngredientsModule, UserModule],
   controllers: [RecipeController],
-  providers: [RecipeService, provideCustomRepository(Recipe, RecipeRepository)]
+  providers: [
+    RecipeService,
+    provideCustomRepository(Recipe, RecipeRepository),
+    provideCustomRepository(RecipeIngredient, RecipeIngredientRepository)
+  ]
 })
 export class RecipeModule {}

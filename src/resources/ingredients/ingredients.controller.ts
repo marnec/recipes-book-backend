@@ -1,22 +1,20 @@
 import {
-  Body,
-  ClassSerializerInterceptor,
-  Controller,
+  Body, Controller,
   Delete,
   Get,
   Param,
   Patch,
   Post,
-  Query,
-  UseInterceptors
+  Query
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
+import { NutritionixService } from '../nutritionix/nutritionix.service';
 import { CreateIngredientDto } from './dto/create-ingredient.dto';
 import { IngredientsFilterDto } from './dto/ingredients-filter.dto';
-import { UpdateIngredientDto } from './dto/update-ingredient.dto';
-import { IngredientsService } from './ingredients.service';
-import { NutritionixService } from '../nutritionix/nutritionix.service';
 import { IngredientSearchResult } from './dto/ingredients-search-results.dto';
+import { UpdateIngredientDto } from './dto/update-ingredient.dto';
+import { IngredientNutrient } from './entities/ingredient_nutrients.entity';
+import { IngredientsService } from './ingredients.service';
 
 @Controller('ingredients')
 export class IngredientsController {
@@ -28,6 +26,11 @@ export class IngredientsController {
   @Post()
   create(@Body() createIngredientDto: CreateIngredientDto) {
     return this.ingredientsService.create(createIngredientDto);
+  }
+
+  @Post(':id')
+  link(@Param('id') linkTargetId: string, @Body() nutrientSource: IngredientSearchResult): Promise<IngredientNutrient[]> {
+    return this.ingredientsService.link(linkTargetId, nutrientSource);
   }
 
   @Get()

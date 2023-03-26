@@ -6,7 +6,9 @@ import { DeleteResult } from 'typeorm';
 import { IngredientSearchResult } from '../ingredients/dto/ingredients-search-results.dto';
 import { CreateRecipeDto } from './dto/create-recipe.dto';
 import { RecipeFilterDto } from './dto/recipe-filter.dto';
+import { ReorderDto } from './dto/reorder.dto';
 import { UpdateRecipeDto } from './dto/update-recipe.dto';
+import { RecipeIngredient } from './entities/recipe-ingredient.entity';
 import { Recipe } from './entities/recipe.entity';
 import { RecipeService } from './recipe.service';
 
@@ -29,21 +31,29 @@ export class RecipeController {
     return new PaginatedResult<Recipe>(...results);
   }
 
+  @Post(':id/ingredients')
+  async associateNewIngredient(
+    @Param('id') id: string,
+    @Body() newIngredient: Pick<IngredientSearchResult, 'foodName'>
+  ): Promise<RecipeIngredient> {
+    return this.recipeService.associateNewIngredient(id, newIngredient);
+  }
+
+  @Post(':id')
+  async reorderIngredients(@Param('id') id: string, @Body() { from, to, ingredientId }: ReorderDto) {
+    return this.recipeService.reorderIngredients(id, ingredientId, from, to);
+  }
+
   @Post()
   async create(@Body() createRecipeDto: CreateRecipeDto) {
     return this.recipeService.create(createRecipeDto);
   }
 
-  @Post(':id/ingredients')
-  async associateNewIngredient(
-    @Param('id') id: string,
-    @Body() newIngredient: Pick<IngredientSearchResult, 'foodName'>
-  ) {
-    return this.recipeService.associateNewIngredient(id, newIngredient);
-  }
-
   @Put(':id/ingredients')
-  async associateIngredient(@Param('id') id: string, @Body() ingredient: IngredientSearchResult): Promise<Recipe> {
+  async associateIngredient(
+    @Param('id') id: string,
+    @Body() ingredient: IngredientSearchResult
+  ): Promise<RecipeIngredient> {
     return this.recipeService.associateIngredient(id, ingredient);
   }
 
@@ -58,7 +68,10 @@ export class RecipeController {
   }
 
   @Delete(':id/ingredients/:ingredientId')
-  async removeIngredient(@Param('id') id: string, @Param('ingredientId') ingredientId: string): Promise<Recipe> {
+  async removeIngredient(
+    @Param('id') id: string,
+    @Param('ingredientId') ingredientId: string
+  ): Promise<DeleteResult> {
     return this.recipeService.dissociateIngredient(id, ingredientId);
   }
 }

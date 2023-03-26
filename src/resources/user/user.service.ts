@@ -1,37 +1,68 @@
-import {
-  Injectable, NotFoundException
-} from '@nestjs/common';
-import { UpsertUserDto } from './dto/upsert-user.dto';
-import { Language } from './entities/language.entity';
+import { HttpService } from '@nestjs/axios';
+import { Injectable } from '@nestjs/common';
+import { UserRecord } from 'firebase-admin/auth';
+import { firstValueFrom } from 'rxjs';
+import { AuthService } from 'src/auth/auth.service';
+import { Transactional } from 'typeorm-transactional';
+import { UserRecipe, UserRole } from './entities/user-recipe.entity';
 import { User } from './entities/user.entity';
+import { UserRecipeRepository } from './user-recipe.repository';
 import { UserRepository } from './user.repository';
 
 @Injectable()
 export class UserService {
+  constructor(
+    private userRepository: UserRepository,
+    private userRecipeRepository: UserRecipeRepository,
+    private authService: AuthService,
+    private http: HttpService
+  ) {}
 
-  constructor(private userRepository: UserRepository) {}
+  async getByUid(uid: string): Promise<User> {
+    return this.userRepository.findOne({ where: { uid } });
+  }
 
-  async getUser(id: string): Promise<User> {
-    const user = await this.userRepository.findOne({ where: { id } });
+  @Transactional()
+  async upsertUser(uid: string) {
+    const userRecord = await this.authService.authUserByUid(uid);
+
+    const user = await this.getByUid(uid);
 
     if (!user) {
-      throw new NotFoundException();
+      return this.createUser(userRecord);
     }
 
     return user;
   }
 
-  public async insertUser(insertUserDto: UpsertUserDto): Promise<User> {
-    const user = new User();
-    user.username = insertUserDto.username;
-    user.email = insertUserDto.email;
-    user.name = insertUserDto.name;
-    user.surname = insertUserDto.surname;
-    user.enabled = insertUserDto.enabled;
-    user.language = { id: insertUserDto.languageId } as Language;
+  async createUser(userRecord: UserRecord) {
+    const { data: image } = await firstValueFrom(
+      this.http.get<ArrayBuffer>(userRecord.photoURL, {
+        responseType: 'arraybuffer'
+      })
+    );
 
-    const { id } = await this.userRepository.save(user);
+    const user = this.userRepository.create({
+      uid: userRecord.uid,
+      email: userRecord.email,
+      userName: userRecord.displayName,
+      avatar: Buffer.from(image).toString('base64')
+    });
 
-    return this.userRepository.findOne({ where: { id } });
-  } 
+    return this.userRepository.save(user);
+  }
+
+  associateToRecipe(userId: string, recipeId: string, role: UserRole): Promise<UserRecipe> {
+    const userRecipe = this.userRecipeRepository.create({
+      userId,
+      recipeId,
+      role
+    });
+
+    return this.userRecipeRepository.save(userRecipe);
+  }
+
+  async dissociateFromRecipe(recipeId: string) {
+    await this.userRecipeRepository.delete({ recipeId });
+  }
 }
