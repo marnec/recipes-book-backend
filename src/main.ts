@@ -24,7 +24,7 @@ async function bootstrap() {
   app.use(urlencoded({ extended: true, limit: '50mb' }));
   app.useStaticAssets(join(__dirname, '..', 'public', 'assets'));
 
-  app.enableCors({ origin: process.env.BACKEND_ORIGIN, methods: 'GET,PUT,POST,DELETE' });
+  app.enableCors({ origin: process.env.BACKEND_ORIGIN, methods: 'GET,PUT,POST,PATCH,DELETE' });
 
   const devEnv = process.env.DEV_ENV === 'true';
   if (devEnv) {

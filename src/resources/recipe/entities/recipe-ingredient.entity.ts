@@ -22,7 +22,7 @@ export class RecipeIngredient extends BaseEntity {
   order: number;
 
   @Column({ type: 'float', nullable: true })
-  amount?: number;
+  quantity?: number;
 
   @Column({ type: 'varchar', nullable: true })
   unit?: string;

@@ -18,6 +18,7 @@ import { UserRole } from '../user/entities/user-recipe.entity';
 import { User } from '../user/entities/user.entity';
 import { UserService } from '../user/user.service';
 import { CreateRecipeDto } from './dto/create-recipe.dto';
+import { IngredientQuantityDto } from './dto/ingredient-quantity.dto';
 import { RecipeFilterDto } from './dto/recipe-filter.dto';
 import { UpdateRecipeDto } from './dto/update-recipe.dto';
 import { RecipeIngredient } from './entities/recipe-ingredient.entity';
@@ -66,8 +67,23 @@ export class RecipeService {
     return recipe;
   }
 
+  @Transactional()
   async update(id: string, updateRecipeDto: UpdateRecipeDto): Promise<Recipe> {
-    return this.recipeRepository.save({ id, ...updateRecipeDto });
+    const { servings } = updateRecipeDto;
+
+    const recipe = await this.recipeRepository.findOneBy({ id });
+
+    if (recipe && recipe.servings && recipe.servings != servings) {
+      this.recipeIngredientRepository
+        .createQueryBuilder()
+        .update(RecipeIngredient)
+        .set({ quantity: () => `("quantity" /${recipe.servings}) * ${servings}` })
+        .where({ recipeId: Equal(recipe.id) })
+        .execute();
+    }
+    await this.recipeRepository.update({ id }, updateRecipeDto);
+
+    return this.findOne(id);
   }
 
   async associateNewIngredient(
@@ -149,6 +165,15 @@ export class RecipeService {
     }
 
     await this.recipeIngredientRepository.update({ recipeId: id, ingredientId }, { order: to });
+  }
+
+  @Transactional()
+  setIngredientQuantity(
+    recipeId: string,
+    ingredientId: string,
+    quantityDto: IngredientQuantityDto
+  ): Promise<UpdateResult> {
+    return this.recipeIngredientRepository.update({ recipeId, ingredientId }, quantityDto);
   }
 
   @Transactional()

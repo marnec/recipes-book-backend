@@ -1,8 +1,10 @@
 import {
   Controller,
   Get, Logger,
-  Param
+  Param,
+  Put
 } from '@nestjs/common';
+import { User } from './entities/user.entity';
 import { UserService } from './user.service';
 
 
@@ -12,7 +14,11 @@ export class UserController {
   constructor(public userService: UserService) {}
 
   @Get(':uid')
-  async upsertUser(@Param('uid') uid: string) {
+  async getSelf(@Param('uid') uid: string): Promise<User> {
+    return this.userService.getByUid(uid);
+  }
+  @Put(':uid')
+  async upsertUser(@Param('uid') uid: string): Promise<User> {
     return this.userService.upsertUser(uid);
   }
 }

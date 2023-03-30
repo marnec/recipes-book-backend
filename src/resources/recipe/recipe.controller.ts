@@ -1,10 +1,11 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Put, Query } from '@nestjs/common';
 import { Pageable } from 'src/shared/base-paginated-filter.dto';
 import { FilteredPaginatedQuery } from 'src/shared/filtered-query.decorator';
 import { PaginatedResult } from 'src/shared/paginated-result.dto';
-import { DeleteResult } from 'typeorm';
+import { DeleteResult, UpdateResult } from 'typeorm';
 import { IngredientSearchResult } from '../ingredients/dto/ingredients-search-results.dto';
 import { CreateRecipeDto } from './dto/create-recipe.dto';
+import { IngredientQuantityDto } from './dto/ingredient-quantity.dto';
 import { RecipeFilterDto } from './dto/recipe-filter.dto';
 import { ReorderDto } from './dto/reorder.dto';
 import { UpdateRecipeDto } from './dto/update-recipe.dto';
@@ -63,8 +64,17 @@ export class RecipeController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string): Promise<DeleteResult> {
+  async remove(@Param('id') id: string): Promise<DeleteResult> {
     return this.recipeService.remove(id);
+  }
+
+  @Patch(':id/ingredients/:ingredientId')
+  async setIngredientQuantity(
+    @Param('id') id: string,
+    @Param('ingredientId') ingredientId: string,
+    @Body() quantityDto: IngredientQuantityDto
+  ): Promise<UpdateResult> {
+    return this.recipeService.setIngredientQuantity(id, ingredientId, quantityDto)
   }
 
   @Delete(':id/ingredients/:ingredientId')

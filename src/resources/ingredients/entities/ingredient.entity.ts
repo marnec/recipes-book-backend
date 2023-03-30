@@ -1,4 +1,3 @@
-
 import { RecipeIngredient } from 'src/resources/recipe/entities/recipe-ingredient.entity';
 import { BaseEntity, Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { IngredientNutrient } from './ingredient_nutrients.entity';
@@ -19,6 +18,9 @@ export class Ingredient extends BaseEntity {
 
   @Column({ type: 'float', nullable: true })
   amount?: number;
+
+  @Column({ type: 'int', name: 'serving_grams', nullable: true })
+  servingGrams?: number;
 
   @Column({ type: 'int', name: 'external_id', nullable: true })
   externalId?: number;

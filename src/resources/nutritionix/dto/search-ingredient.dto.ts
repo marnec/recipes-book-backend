@@ -1,3 +1,7 @@
+export class IngredientNutrient {
+  value: number;
+  attr_id: number;
+}
 
 export class NutritionixIngredientSearchResult {
   common: NutritionixCommonIngredientItem[];
@@ -21,6 +25,8 @@ export class NutritionixCommonIngredientItem {
   };
 
   locale: string;
+
+  full_nutrients: IngredientNutrient[];
+
+  serving_weight_grams: number;
 }
-
-

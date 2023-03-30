@@ -29,6 +29,7 @@ export class IngredientsService {
         name: selectedIngredient.foodName,
         unit: selectedIngredient.servingUnit,
         amount: selectedIngredient.servingQty,
+        servingGrams: selectedIngredient.servingWeightGrams,
         set: 0
       });
     }

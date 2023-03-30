@@ -24,4 +24,6 @@ export interface IngredientSearchResult {
     locale: string;
 
     fullNutrients: IngredientFullNutrient[]
+
+    servingWeightGrams: number;
   }

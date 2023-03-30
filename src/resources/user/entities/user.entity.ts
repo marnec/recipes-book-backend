@@ -32,6 +32,21 @@ export class User extends BaseEntity {
   @Column({ type: 'varchar', length: 8000 })
   avatar: string;
 
+  @Column({ type: 'varchar', length: 1, nullable: true })
+  gender?: string;
+
+  @Column({type: 'float', nullable: true})
+  weight?: number;
+
+  @Column({type: 'float', nullable: true})
+  height?: number;
+
+  @Column({type: 'int', nullable: true})
+  age?: number;
+
+  @Column({ type: 'varchar', name: 'activity_level', nullable: true })
+  activityLevel?: string;
+
   @CreateDateColumn()
   created: Date;
 
