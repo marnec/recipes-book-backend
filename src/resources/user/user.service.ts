@@ -12,6 +12,7 @@ import { UserRepository } from './user.repository';
 @Injectable()
 export class UserService {
   
+  
   constructor(
     private userRepository: UserRepository,
     private userRecipeRepository: UserRecipeRepository,
@@ -24,7 +25,7 @@ export class UserService {
   }
 
   @Transactional()
-  async upsertUser(uid: string) {
+  async createUserIfNotExists(uid: string) {
     const userRecord = await this.authService.authUserByUid(uid);
 
     const user = await this.getByUid(uid);
@@ -34,6 +35,11 @@ export class UserService {
     }
 
     return user;
+  }
+
+  @Transactional()
+  async updateUser(uid: string, updateUserDto: any): Promise<User> {
+    throw new Error('Method not implemented.');
   }
 
   async createUser(userRecord: UserRecord) {
