@@ -3,7 +3,9 @@ import { Injectable } from '@nestjs/common';
 import { UserRecord } from 'firebase-admin/auth';
 import { firstValueFrom } from 'rxjs';
 import { AuthService } from 'src/auth/auth.service';
+import { UpdateResult } from 'typeorm';
 import { Transactional } from 'typeorm-transactional';
+import { UpdateUserDto } from './dto/upsert-user.dto';
 import { UserRecipe, UserRole } from './entities/user-recipe.entity';
 import { User } from './entities/user.entity';
 import { UserRecipeRepository } from './user-recipe.repository';
@@ -11,8 +13,6 @@ import { UserRepository } from './user.repository';
 
 @Injectable()
 export class UserService {
-  
-  
   constructor(
     private userRepository: UserRepository,
     private userRecipeRepository: UserRecipeRepository,
@@ -38,8 +38,8 @@ export class UserService {
   }
 
   @Transactional()
-  async updateUser(uid: string, updateUserDto: any): Promise<User> {
-    throw new Error('Method not implemented.');
+  async updateUser(uid: string, updateUserDto: UpdateUserDto): Promise<UpdateResult> {
+    return this.userRepository.update({ uid }, updateUserDto);
   }
 
   async createUser(userRecord: UserRecord) {
