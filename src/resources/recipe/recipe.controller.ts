@@ -1,4 +1,16 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Put, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Put,
+  Query,
+  UseGuards
+} from '@nestjs/common';
+import { FirebaseJwtAuthGuard } from 'src/auth/firebase-jwt,guard';
 import { Pageable } from 'src/shared/base-paginated-filter.dto';
 import { FilteredPaginatedQuery } from 'src/shared/filtered-query.decorator';
 import { PaginatedResult } from 'src/shared/paginated-result.dto';
@@ -21,7 +33,6 @@ export class RecipeController {
   async findOne(@Param('id') id: string): Promise<Recipe> {
     return this.recipeService.findOne(id);
   }
-
   @Get()
   @FilteredPaginatedQuery(Recipe)
   async findAll(
@@ -41,7 +52,10 @@ export class RecipeController {
   }
 
   @Post(':id')
-  async reorderIngredients(@Param('id') id: string, @Body() { from, to, ingredientId }: ReorderDto) {
+  async reorderIngredients(
+    @Param('id') id: string,
+    @Body() { from, to, ingredientId }: ReorderDto
+  ) {
     return this.recipeService.reorderIngredients(id, ingredientId, from, to);
   }
 
@@ -74,7 +88,7 @@ export class RecipeController {
     @Param('ingredientId') ingredientId: string,
     @Body() quantityDto: IngredientQuantityDto
   ): Promise<UpdateResult> {
-    return this.recipeService.setIngredientQuantity(id, ingredientId, quantityDto)
+    return this.recipeService.setIngredientQuantity(id, ingredientId, quantityDto);
   }
 
   @Delete(':id/ingredients/:ingredientId')

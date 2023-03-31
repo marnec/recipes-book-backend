@@ -13,9 +13,14 @@ import { RecipeModule } from './resources/recipe/recipe.module';
 import { UserModule } from './resources/user/user.module';
 import { NutritionixModule } from './resources/nutritionix/nutritionix.module';
 import { NutrientsModule } from './resources/nutrients/nutrients.module';
+import { PassportModule } from '@nestjs/passport';
+import { FirebaseAuthStrategy } from './auth/firebase-auth.strategy';
+import { APP_GUARD } from '@nestjs/core';
+import { FirebaseJwtAuthGuard } from './auth/firebase-jwt,guard';
 
 @Module({
   imports: [
+    PassportModule.register({ defaultStrategy: 'firebase-jwt' }),
     TypeOrmModule.forRootAsync({
       useFactory() {
         return config;
@@ -36,7 +41,15 @@ import { NutrientsModule } from './resources/nutrients/nutrients.module';
     NutrientsModule
   ],
   controllers: [AppController],
-  providers: [AppService]
+  providers: [
+    AppService,
+    FirebaseAuthStrategy,
+    {
+      provide: APP_GUARD,
+      useClass: FirebaseJwtAuthGuard
+    }
+  ],
+  exports: [PassportModule]
 })
 export class AppModule {
   configure(consumer: MiddlewareConsumer): void {
