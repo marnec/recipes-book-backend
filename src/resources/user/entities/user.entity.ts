@@ -44,8 +44,8 @@ export class User extends BaseEntity {
   @Column({type: 'int', nullable: true})
   age?: number;
 
-  @Column({ type: 'varchar', name: 'activity_level', nullable: true })
-  activityLevel?: string;
+  @Column({ type: 'int', name: 'activity_level', nullable: true })
+  activityLevel?: number;
 
   @CreateDateColumn()
   created: Date;

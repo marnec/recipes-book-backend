@@ -7,10 +7,8 @@ import {
   Patch,
   Post,
   Put,
-  Query,
-  UseGuards
+  Query
 } from '@nestjs/common';
-import { FirebaseJwtAuthGuard } from 'src/auth/firebase-jwt,guard';
 import { Pageable } from 'src/shared/base-paginated-filter.dto';
 import { FilteredPaginatedQuery } from 'src/shared/filtered-query.decorator';
 import { PaginatedResult } from 'src/shared/paginated-result.dto';

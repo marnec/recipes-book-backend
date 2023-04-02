@@ -1,7 +1,7 @@
 import { HttpModule } from '@nestjs/axios';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AuthModule } from 'src/auth/auth.module';
+import { AuthModule } from 'src/resources/auth/auth.module';
 import { provideCustomRepository } from 'src/shared/provide-custom-repository';
 import { Language } from './entities/language.entity';
 import { UserRecipe } from './entities/user-recipe.entity';

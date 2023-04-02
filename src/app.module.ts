@@ -5,7 +5,7 @@ import { DataSource } from 'typeorm';
 import { addTransactionalDataSource } from 'typeorm-transactional';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { AuthModule } from './auth/auth.module';
+import { AuthModule } from './resources/auth/auth.module';
 import { RequestContextMiddleware } from './custom-middleware/request-context.middleware';
 import { config } from './ormconfig';
 import { IngredientsModule } from './resources/ingredients/ingredients.module';
@@ -14,9 +14,9 @@ import { UserModule } from './resources/user/user.module';
 import { NutritionixModule } from './resources/nutritionix/nutritionix.module';
 import { NutrientsModule } from './resources/nutrients/nutrients.module';
 import { PassportModule } from '@nestjs/passport';
-import { FirebaseAuthStrategy } from './auth/firebase-auth.strategy';
+import { FirebaseAuthStrategy } from './resources/auth/firebase-auth.strategy';
 import { APP_GUARD } from '@nestjs/core';
-import { FirebaseJwtAuthGuard } from './auth/firebase-jwt,guard';
+import { FirebaseJwtAuthGuard } from './resources/auth/firebase-jwt.guard';
 
 @Module({
   imports: [

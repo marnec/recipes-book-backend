@@ -1,7 +1,7 @@
 export class UpdateUserDto {
   avatar: string;
   userName: string;
-  activityLevel: string;
+  activityLevel: number;
   age: number;
   gender: string;
   height: number;

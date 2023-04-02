@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Logger, Param, Post, Put } from '@nestjs/common';
 import { UpdateResult } from 'typeorm';
-import { UpdateUserDto } from './dto/upsert-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 import { UserService } from './user.service';
 
