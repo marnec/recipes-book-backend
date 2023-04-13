@@ -11,6 +11,7 @@ import {
 } from 'typeorm';
 import { Language } from './language.entity';
 import { UserRecipe } from './user-recipe.entity';
+import { UserPlan } from './user-plan.entity';
 
 @Entity({ name: 'users' })
 export class User extends BaseEntity {
@@ -35,13 +36,13 @@ export class User extends BaseEntity {
   @Column({ type: 'varchar', length: 1, nullable: true })
   gender?: string;
 
-  @Column({type: 'float', nullable: true})
+  @Column({ type: 'float', nullable: true })
   weight?: number;
 
-  @Column({type: 'float', nullable: true})
+  @Column({ type: 'float', nullable: true })
   height?: number;
 
-  @Column({type: 'int', nullable: true})
+  @Column({ type: 'int', nullable: true })
   age?: number;
 
   @Column({ type: 'int', name: 'activity_level', nullable: true })
@@ -59,4 +60,7 @@ export class User extends BaseEntity {
 
   @OneToMany(() => UserRecipe, (userRecipe) => userRecipe.user)
   recipes: UserRecipe[];
+
+  @OneToMany(() => UserPlan, (userPlan) => userPlan.user)
+  userPlans: UserPlan[];
 }

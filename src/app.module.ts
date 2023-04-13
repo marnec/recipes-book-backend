@@ -17,6 +17,7 @@ import { PassportModule } from '@nestjs/passport';
 import { FirebaseAuthStrategy } from './resources/auth/firebase-auth.strategy';
 import { APP_GUARD } from '@nestjs/core';
 import { FirebaseJwtAuthGuard } from './resources/auth/firebase-jwt.guard';
+import { PlanModule } from './resources/plan/plan.module';
 
 @Module({
   imports: [
@@ -38,7 +39,8 @@ import { FirebaseJwtAuthGuard } from './resources/auth/firebase-jwt.guard';
     RecipeModule,
     IngredientsModule,
     NutritionixModule,
-    NutrientsModule
+    NutrientsModule,
+    PlanModule
   ],
   controllers: [AppController],
   providers: [

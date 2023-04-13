@@ -2,10 +2,15 @@ import { UserRecipe } from 'src/resources/user/entities/user-recipe.entity';
 import {
   BaseEntity,
   Column,
-  Entity, OneToMany,
+  Entity,
+  JoinColumn,
+  ManyToMany,
+  ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn
 } from 'typeorm';
 import { RecipeIngredient } from './recipe-ingredient.entity';
+import { PlanRecipe } from 'src/resources/plan/entities/plan-recipes.entity';
 
 @Entity({ name: 'recipes' })
 export class Recipe extends BaseEntity {
@@ -22,8 +27,12 @@ export class Recipe extends BaseEntity {
   servings: number;
 
   @OneToMany(() => RecipeIngredient, (recipeIngredient) => recipeIngredient.recipe)
-  ingredients: RecipeIngredient[]
+  ingredients: RecipeIngredient[];
 
   @OneToMany(() => UserRecipe, (userRecipe) => userRecipe.recipe)
   collaborators: UserRecipe[];
+
+  @OneToMany(() => PlanRecipe, (planRecipe) => planRecipe.recipe)
+  @JoinColumn({ name: 'plan_id' })
+  planRecipes: PlanRecipe[];
 }

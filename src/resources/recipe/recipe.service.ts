@@ -73,6 +73,18 @@ export class RecipeService {
 
     const recipe = await this.recipeRepository.findOneBy({ id });
 
+    const ingredients = await this.recipeIngredientRepository.find({
+      where: { recipeId: id },
+      relations: { ingredient: true }
+    });
+
+    const nextServingSize = getNextAllowedServingSize(
+      recipe.servings,
+      updateRecipeDto.servings,
+      ingredients
+    );
+    console.log('nextServingSize', nextServingSize);
+
     if (recipe && recipe.servings && recipe.servings != servings) {
       this.recipeIngredientRepository
         .createQueryBuilder()
@@ -182,4 +194,31 @@ export class RecipeService {
     await this.userService.dissociateFromRecipe(id);
     return this.recipeRepository.delete({ id });
   }
+}
+
+// Utility function to find the least common multiple of an array of integers
+function findLeastCommonMultiple(numbers: number[]): number {
+  const gcd = (a: number, b: number): number => (b === 0 ? a : gcd(b, a % b));
+  const lcm = (a: number, b: number): number => (a * b) / gcd(a, b);
+  return numbers.reduce((result, number) => lcm(result, number), 1);
+}
+
+function getNextAllowedServingSize(
+  originalServingSize: number,
+  targetServingSize: number,
+  ingredients: RecipeIngredient[]
+) {
+  const scalingFactor = targetServingSize / originalServingSize
+
+  const qs = ingredients
+    .filter((ingredient) => !ingredient.unit)
+    .map((ingredient) => ingredient.quantity * scalingFactor)
+  
+  console.log(targetServingSize, qs,   qs.map((q) => Number.isInteger(q)));
+
+  console.log(qs);
+
+
+
+  // return originalServingSize * lcm;
 }
