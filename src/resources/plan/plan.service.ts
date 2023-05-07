@@ -1,11 +1,23 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
+import { SpawnSyncReturns, spawnSync } from 'child_process';
 import { CreatePlanDto } from './dto/create-plan.dto';
 import { UpdatePlanDto } from './dto/update-plan.dto';
 
 @Injectable()
 export class PlanService {
+  logger = new Logger(PlanService.name);
+
   create(createPlanDto: CreatePlanDto) {
-    return 'This action adds a new plan';
+    let pythonProcess: SpawnSyncReturns<Buffer>;
+    try {
+      pythonProcess = spawnSync('python3', ['/app/src/resources/plan/test.py']);
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
+    const result = pythonProcess.stdout?.toString()?.trim();
+    const error = pythonProcess.stderr?.toString()?.trim();
+
+    return result;
   }
 
   findAll() {

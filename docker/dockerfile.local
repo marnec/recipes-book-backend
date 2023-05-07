@@ -28,6 +28,10 @@ RUN npm install -g npm@latest
 # install gcc to compile node-oracledb for arm64
 RUN apt install -y build-essential
 
+# install python script dependencies
+RUN apt install -y python3-pip
+RUN pip3 install ortools
+
 # install cli
 RUN npm install -g @nestjs/cli
 

@@ -4,7 +4,7 @@ import { QueryFailedError } from 'typeorm';
 
 @Catch(QueryFailedError)
 export class QueryExceptionFilter implements ExceptionFilter {
-  logger = new Logger('QueryExceptionFilter');
+  logger = new Logger(QueryExceptionFilter.name);
 
   constructor(private readonly httpAdapterHost: HttpAdapterHost) {}
 
