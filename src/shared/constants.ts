@@ -1,5 +1,7 @@
 export const NUTRITIONIX_API_URL = 'https://trackapi.nutritionix.com';
 
+export const PLAN_DIR = 'plans';
+
 export const baseEntitykeys = [
   'id',
   'save',
@@ -10,5 +12,5 @@ export const baseEntitykeys = [
   'softRemove'
 ] as const;
 
-export const activityLevelBase = 1.2
-export const activityLevelStep = 0.175
+export const activityLevelBase = 1.2;
+export const activityLevelStep = 0.175;

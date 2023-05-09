@@ -2,21 +2,50 @@ import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common
 import { SpawnSyncReturns, spawnSync } from 'child_process';
 import { CreatePlanDto } from './dto/create-plan.dto';
 import { UpdatePlanDto } from './dto/update-plan.dto';
+import { PlanRepository } from './plan.repository';
+import { UserPlanRepository } from '../user/user-plan.repository';
+import { UserService } from '../user/user.service';
+import { Transactional } from 'typeorm-transactional';
+import { existsSync, mkdirSync } from 'fs';
+import { PLAN_DIR } from 'src/shared/constants';
 
 @Injectable()
 export class PlanService {
   logger = new Logger(PlanService.name);
 
-  create(createPlanDto: CreatePlanDto) {
+  constructor(
+    private planRepository: PlanRepository,
+    private userPlanRepository: UserPlanRepository,
+    private userService: UserService
+  ) {}
+
+  @Transactional()
+  async create(createPlanDto: CreatePlanDto, userUid: string) {
+    const plan = await this.planRepository.save(this.planRepository.create());
+    const user = await this.userService.getByUid(userUid);
+
+    const userPlan = await this.userPlanRepository.save(
+      this.userPlanRepository.create({
+        plan,
+        user
+      })
+    );
+
+    const dir = `${PLAN_DIR}_${user.id}-${plan.id}`;
+    if (!existsSync(dir)) {
+      mkdirSync(dir);
+    }
+
     let pythonProcess: SpawnSyncReturns<Buffer>;
     try {
-      pythonProcess = spawnSync('python3', ['/app/src/resources/plan/test.py']);
+      pythonProcess = spawnSync('python3', ['/app/src/solver.py']);
     } catch (error) {
       throw new InternalServerErrorException(error);
     }
     const result = pythonProcess.stdout?.toString()?.trim();
     const error = pythonProcess.stderr?.toString()?.trim();
 
+    throw new Error();
     return result;
   }
 

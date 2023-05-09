@@ -48,5 +48,5 @@ def main():
     print('Problem solved in %d iterations' % solver.iterations())
     print('Problem solved in %d branch-and-bound nodes' % solver.nodes())
 
-# if __name__ == "__main__":
-main()
+if __name__ == "__main__":
+  main()

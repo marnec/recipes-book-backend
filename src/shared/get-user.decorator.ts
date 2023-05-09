@@ -1,14 +1,26 @@
-import { createParamDecorator, ExecutionContext } from '@nestjs/common';
+import {
+  createParamDecorator,
+  ExecutionContext,
+  InternalServerErrorException
+} from '@nestjs/common';
+import { camelizeKeys } from 'fast-case';
+import { JWTUserData } from 'src/resources/user/dto/jwt-user-data.dto';
 import { User } from 'src/resources/user/entities/user.entity';
 
-// ogni decorator riceve in input la richiesta e ritorna valori
-// in questo caso la richiesta viene processata dalla funzione
-// validate presente dentro a jwt strategy, se l'id utente
-// presente dentro al token viene trovato nel DB, viene allegato
-// e poi la richiesta arriva qui per esere processata
-export const GetUser = createParamDecorator(
-  (data: unknown, ctx: ExecutionContext): User => {
-    const request = ctx.switchToHttp().getRequest();
-    return request.user.user;
+export const GetUser = createParamDecorator((data: unknown, ctx: ExecutionContext): JWTUserData => {
+  const request = ctx.switchToHttp().getRequest();
+
+  const user = Buffer.from(
+    (request.headers.authorization as string).split('.')[1],
+    'base64url'
+  ).toString();
+
+  try {
+    return camelizeKeys(JSON.parse(user)) as unknown as JWTUserData;
+  } catch (error) {
+    throw new InternalServerErrorException(
+      'could not parse user',
+      `user is not a JSON object: ${user}`
+    );
   }
-);
+});

@@ -2,14 +2,17 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { PlanService } from './plan.service';
 import { CreatePlanDto } from './dto/create-plan.dto';
 import { UpdatePlanDto } from './dto/update-plan.dto';
+import { GetUser } from 'src/shared/get-user.decorator';
+import { UserInfo } from 'firebase-admin/auth';
+import { JWTUserData } from '../user/dto/jwt-user-data.dto';
 
 @Controller('plans')
 export class PlanController {
   constructor(private readonly planService: PlanService) {}
 
   @Post()
-  create(@Body() createPlanDto: CreatePlanDto) {
-    return this.planService.create(createPlanDto);
+  create(@Body() createPlanDto: CreatePlanDto, @GetUser() user: JWTUserData) {
+    return this.planService.create(createPlanDto, user.userId);
   }
 
   @Get()

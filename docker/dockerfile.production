@@ -33,6 +33,10 @@ RUN cd libs && tar -xzf oracledb-src-5.5.0.tgz
 RUN mv libs/package libs/oracledb
 RUN cd libs/oracledb && npm run buildbinary && npm run buildpackage
 
+# install python script dependencies
+RUN apt install -y python3-pip
+RUN pip3 install ortools
+
 # install dependencies
 RUN npm install
 # build

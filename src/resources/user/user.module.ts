@@ -10,15 +10,18 @@ import { UserRecipeRepository } from './user-recipe.repository';
 import { UserController } from './user.controller';
 import { UserRepository } from './user.repository';
 import { UserService } from './user.service';
+import { UserPlan } from './entities/user-plan.entity';
+import { UserPlanRepository } from './user-plan.repository';
 
 @Module({
   imports: [TypeOrmModule.forFeature([User, Language, UserRecipe]), AuthModule, HttpModule],
   providers: [
     UserService,
     provideCustomRepository(User, UserRepository),
-    provideCustomRepository(UserRecipe, UserRecipeRepository)
+    provideCustomRepository(UserRecipe, UserRecipeRepository),
+    provideCustomRepository(UserPlan, UserPlanRepository)
   ],
   controllers: [UserController],
-  exports: [UserService]
+  exports: [UserService, UserPlanRepository]
 })
 export class UserModule {}
