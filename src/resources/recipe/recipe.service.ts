@@ -35,7 +35,7 @@ export class RecipeService {
   constructor(
     private recipeRepository: RecipeRepository,
     private recipeIngredientRepository: RecipeIngredientRepository,
-    private recipeNutrientRepository: RecipeNutrientRepository,
+    // private recipeNutrientRepository: RecipeNutrientRepository,
     private ingredientService: IngredientsService,
     private nutrientsService: NutrientsService,
     private userService: UserService
@@ -71,13 +71,13 @@ export class RecipeService {
 
     await this.userService.associateToRecipe(user.id, recipe.id, UserRole.owner);
 
-    const nutrients = await this.nutrientsService.findAll();
+    // const nutrients = await this.nutrientsService.findAll();
 
-    await this.recipeNutrientRepository.save(
-      nutrients.map((nutrient) =>
-        this.recipeNutrientRepository.create({ recipe, nutrient, amount: 0 })
-      )
-    );
+    // await this.recipeNutrientRepository.save(
+    //   nutrients.map((nutrient) =>
+    //     this.recipeNutrientRepository.create({ recipe, nutrient, amount: 0 })
+    //   )
+    // );
 
     return recipe;
   }
@@ -132,11 +132,11 @@ export class RecipeService {
     );
 
 
-    await Promise.all(
-      nutrients.map(({ amount, nutrientId }) => {
-        return this.recipeNutrientRepository.increaseByAmount(id, nutrientId, amount);
-      })
-    );
+    // await Promise.all(
+    //   nutrients.map(({ amount, nutrientId }) => {
+    //     return this.recipeNutrientRepository.increaseByAmount(id, nutrientId, amount);
+    //   })
+    // );
 
     const order = await this.recipeIngredientRepository.getNextOrder(id);
 
@@ -156,11 +156,11 @@ export class RecipeService {
       relations: { ingredient: { nutrients: { nutrient: true } } }
     });
 
-    await Promise.all(
-      deletedIngredient.ingredient.nutrients.map(({ amount, nutrient }) => {
-        return this.recipeNutrientRepository.decreaseByAmount(recipeId, nutrient.id, amount);
-      })
-    );
+    // await Promise.all(
+    //   deletedIngredient.ingredient.nutrients.map(({ amount, nutrient }) => {
+    //     return this.recipeNutrientRepository.decreaseByAmount(recipeId, nutrient.id, amount);
+    //   })
+    // );
 
     const deleteResult = await this.recipeIngredientRepository.delete({ recipeId, ingredientId });
 
@@ -212,7 +212,7 @@ export class RecipeService {
   @Transactional()
   async remove(id: string): Promise<DeleteResult> {
     await this.recipeIngredientRepository.delete({ recipeId: id });
-    await this.recipeNutrientRepository.delete({ recipeId: id });
+    // await this.recipeNutrientRepository.delete({ recipeId: id });
     await this.userService.dissociateFromRecipe(id);
     return this.recipeRepository.delete({ id });
   }

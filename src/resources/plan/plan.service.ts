@@ -38,15 +38,33 @@ export class PlanService {
       mkdirSync(dir);
     }
 
-    const [userRecipes] = await this.recipeService.findAll({ uid: userUid }, unPaged, {
+    const [recipes] = await this.recipeService.findAll({ uid: userUid }, unPaged, {
       ingredients: { ingredient: { nutrients: { nutrient: true } } }
     });
 
-    userRecipes.map((recipe) => {
-      recipe.ingredients.map(({ quantity, ingredient }) =>
-        ingredient.nutrients.map(({ amount, nutrient }) => ({ [nutrient.id]: amount }))
-      );
+    console.log(recipes);
+
+    const a = recipes.flatMap((recipe) => {
+      return recipe.ingredients.reduce((acc, { quantity, ingredient }) => {
+        const nutrientsMap = ingredient.nutrients.reduce(
+          (acc, { amount, nutrient }) => ({ ...acc, [nutrient.id]: amount }),
+          {}
+        );
+
+        console.log(nutrientsMap)
+
+        for (const [key, value] of Object.entries(nutrientsMap)) {
+          if (acc[key]) {
+            acc[key] += value;
+          } else {
+            acc[key] = value;
+          }
+        }
+        return acc;
+      }, {});
     });
+
+    console.log(a);
 
     let pythonProcess: SpawnSyncReturns<Buffer>;
     try {
@@ -58,7 +76,6 @@ export class PlanService {
     const error = pythonProcess.stderr?.toString()?.trim();
 
     throw new Error();
-    return result;
   }
 
   findAll() {
