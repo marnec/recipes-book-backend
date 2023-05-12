@@ -4,6 +4,7 @@ import { Pageable } from 'src/shared/base-paginated-filter.dto';
 import {
   DeleteResult,
   Equal,
+  FindOptionsRelations,
   LessThan,
   LessThanOrEqual,
   MoreThan,
@@ -25,18 +26,22 @@ import { RecipeIngredient } from './entities/recipe-ingredient.entity';
 import { Recipe } from './entities/recipe.entity';
 import { RecipeIngredientRepository } from './recipe-ingredient.repository';
 import { RecipeRepository } from './recipe.repository';
+import { BasePaginatedFilterDto } from 'src/shared/base-paginated-filter.dto';
+import { RecipeNutrientRepository } from './recipe-nutrient.repository';
+import { RecipeNutrient } from './entities/recipe-nutrient.entity';
 
 @Injectable()
 export class RecipeService {
   constructor(
     private recipeRepository: RecipeRepository,
     private recipeIngredientRepository: RecipeIngredientRepository,
+    private recipeNutrientRepository: RecipeNutrientRepository,
     private ingredientService: IngredientsService,
     private nutrientsService: NutrientsService,
     private userService: UserService
   ) {}
 
-  findOne(id: string): Promise<Recipe> {
+  async findOne(id: string): Promise<Recipe> {
     return this.recipeRepository.findOne({
       where: { id },
       order: { ingredients: { order: 'ASC' } },
@@ -45,14 +50,16 @@ export class RecipeService {
   }
 
   async findAll(
-    filter: RecipeFilterDto,
-    { take, skip, order }: Pageable
+    filter: Omit<RecipeFilterDto, keyof BasePaginatedFilterDto>,
+    { take, skip, order }: Pageable,
+    relations: FindOptionsRelations<Recipe> = null
   ): Promise<[Recipe[], number]> {
     return this.recipeRepository.findAndCount({
       take,
       skip,
       order,
-      where: { collaborators: { user: { uid: Equal(filter.uid) } } }
+      where: { collaborators: { user: { uid: Equal(filter.uid) } } },
+      relations
     });
   }
 
@@ -63,6 +70,14 @@ export class RecipeService {
     recipe = await this.recipeRepository.save(recipe);
 
     await this.userService.associateToRecipe(user.id, recipe.id, UserRole.owner);
+
+    const nutrients = await this.nutrientsService.findAll();
+
+    await this.recipeNutrientRepository.save(
+      nutrients.map((nutrient) =>
+        this.recipeNutrientRepository.create({ recipe, nutrient, amount: 0 })
+      )
+    );
 
     return recipe;
   }
@@ -86,6 +101,7 @@ export class RecipeService {
     return this.findOne(id);
   }
 
+  @Transactional()
   async associateNewIngredient(
     id: string,
     { foodName }: Pick<IngredientSearchResult, 'foodName'>
@@ -110,7 +126,17 @@ export class RecipeService {
   ): Promise<RecipeIngredient> {
     const ingredient = await this.ingredientService.createIfNotExists(selectedIngredient);
 
-    await this.nutrientsService.associateNutrients(ingredient.id, selectedIngredient.fullNutrients);
+    const nutrients = await this.nutrientsService.associateNutrients(
+      ingredient.id,
+      selectedIngredient.fullNutrients
+    );
+
+
+    await Promise.all(
+      nutrients.map(({ amount, nutrientId }) => {
+        return this.recipeNutrientRepository.increaseByAmount(id, nutrientId, amount);
+      })
+    );
 
     const order = await this.recipeIngredientRepository.getNextOrder(id);
 
@@ -126,8 +152,15 @@ export class RecipeService {
   @Transactional()
   async dissociateIngredient(recipeId: string, ingredientId: string): Promise<DeleteResult> {
     const deletedIngredient = await this.recipeIngredientRepository.findOne({
-      where: { recipeId, ingredientId }
+      where: { recipeId, ingredientId },
+      relations: { ingredient: { nutrients: { nutrient: true } } }
     });
+
+    await Promise.all(
+      deletedIngredient.ingredient.nutrients.map(({ amount, nutrient }) => {
+        return this.recipeNutrientRepository.decreaseByAmount(recipeId, nutrient.id, amount);
+      })
+    );
 
     const deleteResult = await this.recipeIngredientRepository.delete({ recipeId, ingredientId });
 
@@ -179,6 +212,7 @@ export class RecipeService {
   @Transactional()
   async remove(id: string): Promise<DeleteResult> {
     await this.recipeIngredientRepository.delete({ recipeId: id });
+    await this.recipeNutrientRepository.delete({ recipeId: id });
     await this.userService.dissociateFromRecipe(id);
     return this.recipeRepository.delete({ id });
   }

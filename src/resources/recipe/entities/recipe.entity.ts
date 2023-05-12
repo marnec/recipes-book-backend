@@ -11,6 +11,7 @@ import {
 } from 'typeorm';
 import { RecipeIngredient } from './recipe-ingredient.entity';
 import { PlanRecipe } from 'src/resources/plan/entities/plan-recipes.entity';
+import { RecipeNutrient } from './recipe-nutrient.entity';
 
 @Entity({ name: 'recipes' })
 export class Recipe extends BaseEntity {
@@ -28,6 +29,9 @@ export class Recipe extends BaseEntity {
 
   @OneToMany(() => RecipeIngredient, (recipeIngredient) => recipeIngredient.recipe)
   ingredients: RecipeIngredient[];
+
+  @OneToMany(() => RecipeNutrient, (recipeNutrients) => recipeNutrients.recipe)
+  nutrients: RecipeNutrient[];
 
   @OneToMany(() => UserRecipe, (userRecipe) => userRecipe.recipe)
   collaborators: UserRecipe[];

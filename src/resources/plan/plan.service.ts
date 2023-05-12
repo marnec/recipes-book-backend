@@ -7,7 +7,8 @@ import { UserPlanRepository } from '../user/user-plan.repository';
 import { UserService } from '../user/user.service';
 import { Transactional } from 'typeorm-transactional';
 import { existsSync, mkdirSync } from 'fs';
-import { PLAN_DIR } from 'src/shared/constants';
+import { PLAN_DIR, unPaged } from 'src/shared/constants';
+import { RecipeService } from '../recipe/recipe.service';
 
 @Injectable()
 export class PlanService {
@@ -16,7 +17,8 @@ export class PlanService {
   constructor(
     private planRepository: PlanRepository,
     private userPlanRepository: UserPlanRepository,
-    private userService: UserService
+    private userService: UserService,
+    private recipeService: RecipeService
   ) {}
 
   @Transactional()
@@ -35,6 +37,16 @@ export class PlanService {
     if (!existsSync(dir)) {
       mkdirSync(dir);
     }
+
+    const [userRecipes] = await this.recipeService.findAll({ uid: userUid }, unPaged, {
+      ingredients: { ingredient: { nutrients: { nutrient: true } } }
+    });
+
+    userRecipes.map((recipe) => {
+      recipe.ingredients.map(({ quantity, ingredient }) =>
+        ingredient.nutrients.map(({ amount, nutrient }) => ({ [nutrient.id]: amount }))
+      );
+    });
 
     let pythonProcess: SpawnSyncReturns<Buffer>;
     try {

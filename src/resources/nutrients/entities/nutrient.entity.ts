@@ -1,4 +1,5 @@
 import { IngredientNutrient } from 'src/resources/ingredients/entities/ingredient_nutrients.entity';
+import { RecipeNutrient } from 'src/resources/recipe/entities/recipe-nutrient.entity';
 import { BaseEntity, Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity({ name: 'nutrients' })
@@ -26,4 +27,7 @@ export class Nutrient extends BaseEntity {
   
   @OneToMany(() => IngredientNutrient, (nutrientIngredients) => nutrientIngredients.nutrient)
   nutrientIngredients: IngredientNutrient[]
+
+  @OneToMany(() => RecipeNutrient, (nutrientRecipes) => nutrientRecipes.nutrient)
+  nutrientRecipes: RecipeNutrient[]
 }
