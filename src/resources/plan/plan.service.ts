@@ -9,6 +9,9 @@ import { Transactional } from 'typeorm-transactional';
 import { existsSync, mkdirSync } from 'fs';
 import { PLAN_DIR, unPaged } from 'src/shared/constants';
 import { RecipeService } from '../recipe/recipe.service';
+import { Amount, Unit } from 'uom';
+import { Units } from 'uom-units';
+import { deserializeUnit } from 'src/shared/units';
 
 @Injectable()
 export class PlanService {
@@ -19,7 +22,7 @@ export class PlanService {
     private userPlanRepository: UserPlanRepository,
     private userService: UserService,
     private recipeService: RecipeService
-  ) {}
+  ) { }
 
   @Transactional()
   async create(createPlanDto: CreatePlanDto, userUid: string) {
@@ -46,19 +49,18 @@ export class PlanService {
 
     const a = recipes.flatMap((recipe) => {
       return recipe.ingredients.reduce((acc, { quantity, ingredient }) => {
+
+        const unit = deserializeUnit(ingredient.unit) || Unit.timesNumber('serving', ingredient.servingGrams, Units.Gram)
+
+        const ingredientAmount = Amount.create(quantity, unit)
+
         const nutrientsMap = ingredient.nutrients.reduce(
           (acc, { amount, nutrient }) => ({ ...acc, [nutrient.id]: amount }),
           {}
         );
 
-        console.log(nutrientsMap)
-
         for (const [key, value] of Object.entries(nutrientsMap)) {
-          if (acc[key]) {
-            acc[key] += value;
-          } else {
-            acc[key] = value;
-          }
+          acc[key] = (acc[key] ?? 0) + value;
         }
         return acc;
       }, {});

@@ -9,6 +9,7 @@ import {
   LessThanOrEqual,
   MoreThan,
   MoreThanOrEqual,
+  Not,
   UpdateResult
 } from 'typeorm';
 import { Transactional } from 'typeorm-transactional';
@@ -39,7 +40,7 @@ export class RecipeService {
     private ingredientService: IngredientsService,
     private nutrientsService: NutrientsService,
     private userService: UserService
-  ) {}
+  ) { }
 
   async findOne(id: string): Promise<Recipe> {
     return this.recipeRepository.findOne({
@@ -58,7 +59,7 @@ export class RecipeService {
       take,
       skip,
       order,
-      where: { collaborators: { user: { uid: Equal(filter.uid) } } },
+      where: { collaborators: { user: { uid: Equal(filter.uid) } }, ingredients: { ingredient: { nutrients: { nutrient: { unit: Not('IU') } } } } },
       relations
     });
   }
